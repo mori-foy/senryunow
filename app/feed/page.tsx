@@ -1,12 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PostCard from "@/components/PostCard";
 import { useAppStore } from "@/store/useAppStore";
 
 export default function FeedPage() {
-  const router = useRouter();
   const { isExpired, hasPosted, posts } = useAppStore();
 
   // If timer expired and user hasn't posted, they shouldn't be on this page
@@ -32,13 +30,7 @@ export default function FeedPage() {
   return (
     <main className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => router.push("/")}
-          className="text-sm text-[#2C4A7C] underline"
-        >
-          ← 戻る
-        </button>
+      <div className="flex items-center justify-center mb-6">
         <Image
           src="/logo_senryunow.png"
           alt="川柳なう。"
@@ -46,7 +38,6 @@ export default function FeedPage() {
           height={46}
           priority
         />
-        <div className="w-12" />
       </div>
 
       {/* Posts */}
