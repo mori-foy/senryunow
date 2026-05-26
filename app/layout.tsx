@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Kaisei_Opti, Noto_Sans_JP } from "next/font/google";
+import { Dela_Gothic_One, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
-const kaiseiOpti = Kaisei_Opti({
-  weight: ["400", "700"],
+const delaGothicOne = Dela_Gothic_One({
+  weight: "400",
   subsets: ["latin"],
   variable: "--font-kaisei",
   display: "swap",
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${kaiseiOpti.variable} ${notoSansJP.variable} h-full`}
+      className={`${delaGothicOne.variable} ${notoSansJP.variable} h-full`}
     >
       <body className="min-h-full">{children}</body>
     </html>
