@@ -44,10 +44,10 @@ function SlotEditor({
         </span>
       </div>
 
-      {/* Selected parts */}
-      <div className="min-h-10 flex flex-wrap gap-1.5 mb-3 p-2 bg-[#F5F0E8] rounded-xl border border-dashed border-[#C0392B]/30">
+      {/* Selected parts — vertical writing display, tap to remove */}
+      <div className="flex flex-row-reverse justify-start gap-3 min-h-[88px] mb-3 px-3 py-2 bg-[#F5F0E8] rounded-xl border border-dashed border-[#C0392B]/30 overflow-x-auto">
         {slot.selected.length === 0 ? (
-          <span className="text-xs text-gray-400 self-center">
+          <span className="text-xs text-gray-400 self-center w-full text-center">
             下からパーツを選んでください
           </span>
         ) : (
@@ -55,12 +55,15 @@ function SlotEditor({
             <button
               key={part.id}
               onClick={() => togglePartSelection(slotIndex, part)}
-              className="inline-flex items-center gap-1 px-2 py-1 bg-[#C0392B] text-white text-sm rounded-lg active:scale-95 transition-transform"
+              title="タップで削除"
+              className="text-xl text-[#1A1A1A] hover:text-[#C0392B] active:scale-95 transition-all leading-relaxed shrink-0"
+              style={{
+                writingMode: "vertical-rl",
+                textOrientation: "mixed",
+                fontFamily: "var(--font-kaisei)",
+              }}
             >
-              <span style={{ fontFamily: "var(--font-kaisei)" }}>
-                {part.text}
-              </span>
-              <span className="text-xs opacity-70">×</span>
+              {part.text}
             </button>
           ))
         )}

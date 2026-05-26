@@ -110,15 +110,24 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Preview */}
+      {/* Preview — vertical writing */}
       {isValid && (
-        <div className="my-4 p-4 bg-white/70 rounded-2xl border border-[#D4C9B8] text-center ink-appear">
-          <p className="text-xs text-gray-400 mb-2">プレビュー</p>
-          <div
-            className="text-lg text-[#1A1A1A]"
-            style={{ fontFamily: "var(--font-kaisei)" }}
-          >
-            {pendingLines[0]}　{pendingLines[1]}　{pendingLines[2]}
+        <div className="my-4 p-4 bg-white/70 rounded-2xl border border-[#D4C9B8] ink-appear">
+          <p className="text-xs text-gray-400 mb-3 text-center">プレビュー</p>
+          <div className="flex flex-row-reverse justify-center gap-6" style={{ height: "110px" }}>
+            {pendingLines.map((line, i) => (
+              <div
+                key={i}
+                className="text-xl text-[#1A1A1A] leading-loose"
+                style={{
+                  writingMode: "vertical-rl",
+                  textOrientation: "mixed",
+                  fontFamily: "var(--font-kaisei)",
+                }}
+              >
+                {line}
+              </div>
+            ))}
           </div>
         </div>
       )}
