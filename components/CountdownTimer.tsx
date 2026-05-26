@@ -9,42 +9,44 @@ export default function CountdownTimer() {
 
   useEffect(() => {
     if (isExpired) return;
-    intervalRef.current = setInterval(() => {
-      tickTimer();
-    }, 1000);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    intervalRef.current = setInterval(() => tickTimer(), 1000);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [isExpired, tickTimer]);
 
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
   const timeStr = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  const progress = remainingSeconds / 300;
 
   const isUrgent = remainingSeconds <= 60 && !isExpired;
   const isCritical = remainingSeconds <= 30 && !isExpired;
 
-  if (isExpired) {
-    return (
-      <div className="text-center py-2">
-        <span className="text-2xl font-bold text-red-600 font-mono">時間切れ</span>
-      </div>
-    );
-  }
-
   return (
-    <div className="text-center py-2">
-      <span
-        className={`text-4xl font-bold font-mono tracking-widest transition-colors duration-300 ${
-          isCritical
-            ? "text-red-600 animate-pulse"
-            : isUrgent
-            ? "text-red-500"
-            : "text-[#2C4A7C]"
-        }`}
-      >
-        {timeStr}
-      </span>
+    <div className="fixed top-0 left-0 right-0 z-50">
+      {/* Progress bar */}
+      <div className="h-1 bg-gray-200">
+        <div
+          className={`h-full transition-all duration-1000 ${
+            isCritical ? "bg-red-500" : isUrgent ? "bg-orange-400" : "bg-[#2C4A7C]"
+          }`}
+          style={{ width: `${Math.max(0, progress * 100)}%` }}
+        />
+      </div>
+
+      {/* Timer bar */}
+      <div className="bg-[#F5F0E8]/90 backdrop-blur-sm border-b border-[#D4C9B8] px-4 py-1.5 flex justify-end items-center max-w-md mx-auto w-full">
+        {isExpired ? (
+          <span className="text-sm font-bold text-red-600 font-mono">時間切れ</span>
+        ) : (
+          <span
+            className={`text-sm font-bold font-mono tracking-widest transition-colors ${
+              isCritical ? "text-red-600 animate-pulse" : isUrgent ? "text-red-500" : "text-[#2C4A7C]"
+            }`}
+          >
+            ⏱ {timeStr}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

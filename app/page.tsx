@@ -60,7 +60,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
+    <main className="min-h-screen flex flex-col px-4 pt-16 pb-6 max-w-md mx-auto">
       {/* Header */}
       <div className="text-center mb-4">
         <Image
