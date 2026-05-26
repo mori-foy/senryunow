@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { Part } from "@/data/parts";
 
@@ -20,7 +21,6 @@ function SlotEditor({
   const totalMora = slot.selected.reduce((sum, p) => sum + p.mora, 0);
   const isOver = totalMora > target;
   const isExact = totalMora === target;
-
   const selectedIds = new Set(slot.selected.map((p) => p.id));
 
   return (
@@ -105,7 +105,16 @@ export default function HaikuBuilder({
 }: {
   onValidChange: (valid: boolean, lines: [string, string, string]) => void;
 }) {
-  const { slots } = useAppStore();
+  const { slots, initCandidates } = useAppStore();
+
+  // Populate candidates on client mount (avoids SSR/client mismatch)
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true;
+      initCandidates();
+    }
+  }, [initCandidates]);
 
   const lines: [string, string, string] = [
     slots[0].selected.map((p) => p.text).join(""),
@@ -116,13 +125,13 @@ export default function HaikuBuilder({
   const totals = slots.map((s) =>
     s.selected.reduce((sum, p) => sum + p.mora, 0)
   );
-  const isValid =
-    totals[0] === 5 && totals[1] === 7 && totals[2] === 5;
+  const isValid = totals[0] === 5 && totals[1] === 7 && totals[2] === 5;
 
-  // Notify parent of validity
-  if (typeof window !== "undefined") {
+  // Notify parent — must be in useEffect to avoid updating parent during render
+  useEffect(() => {
     onValidChange(isValid, lines);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValid, lines[0], lines[1], lines[2]]);
 
   return (
     <div>

@@ -3,6 +3,15 @@
 import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 
+function rotationForId(id: string): number {
+  // Deterministic tilt based on comment ID — avoids SSR mismatch
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
+  }
+  return ((hash % 300) - 150) / 100;
+}
+
 export default function RedPenComment({ postId }: { postId: string }) {
   const { posts, addRedPenComment } = useAppStore();
   const post = posts.find((p) => p.id === postId);
@@ -23,7 +32,7 @@ export default function RedPenComment({ postId }: { postId: string }) {
         <div
           key={comment.id}
           className="mb-2 px-3 py-1.5 bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg"
-          style={{ transform: `rotate(${(Math.random() - 0.5) * 1.5}deg)` }}
+          style={{ transform: `rotate(${rotationForId(comment.id)}deg)` }}
         >
           <p
             className="text-sm text-[#C0392B] font-medium"

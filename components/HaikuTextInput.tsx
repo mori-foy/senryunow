@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { countMora } from "@/lib/moraCounts";
 
@@ -25,7 +26,11 @@ export default function HaikuTextInput({
     counts[1] === 7 &&
     counts[2] === 5;
 
-  onValidChange(isValid, parts);
+  // Notify parent in useEffect — never call setX from another component's render
+  useEffect(() => {
+    onValidChange(isValid, parts);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isValid, parts[0], parts[1], parts[2]]);
 
   return (
     <div className="bg-white/60 rounded-2xl p-4 border border-[#D4C9B8]">
@@ -33,13 +38,13 @@ export default function HaikuTextInput({
         「/」または「／」で区切って入力してください
       </p>
       <p className="text-xs text-gray-400 mb-3">
-        例：春風が／桜散りゆく／夕暮れに
+        例：はるかぜが／さくらちりゆく／ゆうぐれに
       </p>
 
       <textarea
         value={textInput}
         onChange={(e) => setTextInput(e.target.value)}
-        placeholder="春風が／桜散りゆく／夕暮れに"
+        placeholder="はるかぜが／さくらちりゆく／ゆうぐれに"
         className="w-full p-3 rounded-xl border border-[#D4C9B8] bg-[#F5F0E8] text-[#1A1A1A] text-lg focus:outline-none focus:border-[#2C4A7C] resize-none"
         style={{ fontFamily: "var(--font-kaisei)", minHeight: "80px" }}
         rows={3}
@@ -62,7 +67,9 @@ export default function HaikuTextInput({
                       : "text-red-500"
                   }
                 >
-                  {count === target ? `${count}音 ✓` : `${count}音（${target}音必要）`}
+                  {count === target
+                    ? `${count}音 ✓`
+                    : `${count}音（${target}音必要）`}
                 </span>
               </div>
             );

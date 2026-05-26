@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { Part, allParts, getRandomParts } from "@/data/parts";
+import { Part, getRandomParts } from "@/data/parts";
 import { Post, RedPenComment, initialMockPosts } from "@/data/mockPosts";
 
 export interface SlotState {
@@ -23,6 +23,7 @@ interface AppState {
   tickTimer: () => void;
   expireTimer: () => void;
   setInputMode: (mode: InputMode) => void;
+  initCandidates: () => void;
   togglePartSelection: (slotIndex: 0 | 1 | 2, part: Part) => void;
   shuffleCandidates: (slotIndex: 0 | 1 | 2) => void;
   setTextInput: (text: string) => void;
@@ -32,19 +33,15 @@ interface AppState {
   addRedPenComment: (postId: string, text: string) => void;
 }
 
-function makeSlot(): SlotState {
-  return {
-    candidates: getRandomParts(6),
-    selected: [],
-  };
-}
+const emptySlot = (): SlotState => ({ candidates: [], selected: [] });
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>((set) => ({
   remainingSeconds: 300,
   isExpired: false,
   hasPosted: false,
   inputMode: "parts",
-  slots: [makeSlot(), makeSlot(), makeSlot()],
+  // Start with empty candidates — populated client-side via initCandidates()
+  slots: [emptySlot(), emptySlot(), emptySlot()],
   textInput: "",
   posts: initialMockPosts.map((p) => ({ ...p })),
 
@@ -59,6 +56,15 @@ export const useAppStore = create<AppState>((set, get) => ({
   expireTimer: () => set({ remainingSeconds: 0, isExpired: true }),
 
   setInputMode: (mode) => set({ inputMode: mode }),
+
+  initCandidates: () =>
+    set({
+      slots: [
+        { candidates: getRandomParts(6), selected: [] },
+        { candidates: getRandomParts(6), selected: [] },
+        { candidates: getRandomParts(6), selected: [] },
+      ],
+    }),
 
   togglePartSelection: (slotIndex, part) =>
     set((state) => {
