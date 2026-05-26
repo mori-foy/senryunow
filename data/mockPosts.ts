@@ -24,27 +24,6 @@ export interface Post {
 
 export const initialMockPosts: Post[] = [
   {
-    id: "post1",
-    userId: "yuki",
-    username: "ゆうき",
-    avatar: "😎",
-    lines: ["寝るつもり", "スマホ見てたら", "朝やがな"],
-    timestamp: new Date(Date.now() - 1000 * 60 * 3),
-    stamps: [
-      { emoji: "😂", username: "さくら" },
-      { emoji: "🥲", username: "みお" },
-    ],
-    redPenComments: [
-      {
-        id: "rpc1",
-        authorId: "taro",
-        authorName: "たろう",
-        text: "それ昨日の俺やん",
-        timestamp: new Date(Date.now() - 1000 * 60 * 2),
-      },
-    ],
-  },
-  {
     id: "post2",
     userId: "sakura",
     username: "さくら",
@@ -63,6 +42,27 @@ export const initialMockPosts: Post[] = [
         authorName: "ゆうき",
         text: "季語がないから不合格",
         timestamp: new Date(Date.now() - 1000 * 60 * 1),
+      },
+    ],
+  },
+  {
+    id: "post1",
+    userId: "yuki",
+    username: "ゆうき",
+    avatar: "😎",
+    lines: ["寝るつもり", "スマホ見てたら", "朝やがな"],
+    timestamp: new Date(Date.now() - 1000 * 60 * 3),
+    stamps: [
+      { emoji: "😂", username: "さくら" },
+      { emoji: "🥲", username: "みお" },
+    ],
+    redPenComments: [
+      {
+        id: "rpc1",
+        authorId: "taro",
+        authorName: "たろう",
+        text: "それ昨日の俺やん",
+        timestamp: new Date(Date.now() - 1000 * 60 * 2),
       },
     ],
   },
