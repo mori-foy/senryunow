@@ -68,7 +68,7 @@ function SlotEditor({
       <div className="relative mb-3">
         {isPartsMode ? (
           <div
-            className="w-full px-3 py-3 min-h-[52px] text-xl rounded-xl border border-[#2C4A7C]/40 bg-[#EDE3C8] text-[#1A1A1A] pr-10"
+            className="w-full px-3 py-2 min-h-[44px] text-lg rounded-xl border border-[#2C4A7C]/40 bg-[#CAE0C5] text-[#1A1A1A] pr-10"
             style={{ fontFamily: "var(--font-kaisei)" }}
           >
             {activeText}
@@ -79,7 +79,7 @@ function SlotEditor({
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
             placeholder="タップして入力、または下の候補から選択"
-            className="w-full px-3 py-3 text-xl rounded-xl border border-[#2C4A7C]/40 bg-white focus:outline-none focus:border-[#2C4A7C] pr-10"
+            className="w-full px-3 py-2 text-base rounded-xl border border-[#2C4A7C]/40 bg-white focus:outline-none focus:border-[#2C4A7C] pr-10 placeholder:text-sm"
             style={{ fontFamily: "var(--font-kaisei)" }}
           />
         )}

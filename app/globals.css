@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #EDE3C8;
+  --background: #D8E8D4;
   --foreground: #1A1A1A;
   --accent: #C0392B;
   --sub: #2C4A7C;
-  --border: #D4C9B8;
+  --border: #B4CEB0;
 }
 
 @theme inline {
@@ -17,12 +17,9 @@
 
 body {
   background-color: var(--background);
-  /* 青海波（せいがいは）— 極薄い鱗形パターン */
-  background-image:
-    radial-gradient(circle at 100% 50%, transparent 20%, rgba(120,90,40,0.07) 21%, rgba(120,90,40,0.07) 34%, transparent 35%),
-    radial-gradient(circle at 0% 50%,   transparent 20%, rgba(120,90,40,0.07) 21%, rgba(120,90,40,0.07) 34%, transparent 35%);
-  background-size: 56px 112px;
-  background-position: 0 0, 0 56px;
+  /* 紗綾形（さやがた）— 卍を繋いだ伝統的な幾何学模様 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M0,6 H6 V0 M6,0 V6 H12 M12,0 V6 H18 M18,0 V6 H24 M24,6 V12 H18 M18,12 V6 H12 M12,12 V6 H6 M6,12 V6 H0 M0,12 V18 H6 M6,18 V12 H12 M12,18 V12 H18 M18,18 V12 H24 M24,18 V24 H18 M18,24 V18 H12 M12,24 V18 H6 M6,24 V18 H0' fill='none' stroke='rgba(55,105,60,0.15)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 24px 24px;
   color: var(--foreground);
   font-family: var(--font-noto), "Noto Sans JP", sans-serif;
   -webkit-font-smoothing: antialiased;
