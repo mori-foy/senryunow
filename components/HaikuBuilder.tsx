@@ -68,7 +68,7 @@ function SlotEditor({
       <div className="relative mb-3">
         {isPartsMode ? (
           <div
-            className="w-full px-3 py-3 min-h-[52px] text-xl rounded-xl border border-[#2C4A7C]/40 bg-[#F5F0E8] text-[#1A1A1A] pr-10"
+            className="w-full px-3 py-3 min-h-[52px] text-xl rounded-xl border border-[#2C4A7C]/40 bg-[#EDE3C8] text-[#1A1A1A] pr-10"
             style={{ fontFamily: "var(--font-kaisei)" }}
           >
             {activeText}

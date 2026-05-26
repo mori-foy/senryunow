@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F5F0E8;
+  --background: #EDE3C8;
   --foreground: #1A1A1A;
   --accent: #C0392B;
   --sub: #2C4A7C;
@@ -16,7 +16,13 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  /* 青海波（せいがいは）— 極薄い鱗形パターン */
+  background-image:
+    radial-gradient(circle at 100% 50%, transparent 20%, rgba(120,90,40,0.07) 21%, rgba(120,90,40,0.07) 34%, transparent 35%),
+    radial-gradient(circle at 0% 50%,   transparent 20%, rgba(120,90,40,0.07) 21%, rgba(120,90,40,0.07) 34%, transparent 35%);
+  background-size: 56px 112px;
+  background-position: 0 0, 0 56px;
   color: var(--foreground);
   font-family: var(--font-noto), "Noto Sans JP", sans-serif;
   -webkit-font-smoothing: antialiased;
