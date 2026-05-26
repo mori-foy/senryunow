@@ -49,7 +49,7 @@ export const initialMockPosts: Post[] = [
     userId: "sakura",
     username: "さくら",
     avatar: "🌸",
-    lines: ["好きだよと", "送ったあとの", "3時間"],
+    lines: ["好きだよと", "送ったあとの", "三時間"],
     timestamp: new Date(Date.now() - 1000 * 60 * 2),
     stamps: [
       { emoji: "💯", username: "ゆうき" },
