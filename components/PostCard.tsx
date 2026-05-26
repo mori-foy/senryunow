@@ -25,25 +25,20 @@ export default function PostCard({ post }: { post: Post }) {
       </div>
 
       {/* Senryu - vertical writing */}
-      <div className="flex justify-center mb-4">
-        <div
-          className="flex flex-row-reverse gap-4 px-4"
-          style={{
-            writingMode: "vertical-rl",
-            textOrientation: "mixed",
-            height: "140px",
-          }}
-        >
-          {[...post.lines].reverse().map((line, i) => (
-            <div
-              key={i}
-              className="text-xl text-[#1A1A1A] leading-relaxed"
-              style={{ fontFamily: "var(--font-kaisei)" }}
-            >
-              {line}
-            </div>
-          ))}
-        </div>
+      <div className="flex flex-row-reverse justify-center gap-6 mb-4 px-4" style={{ height: "140px" }}>
+        {post.lines.map((line, i) => (
+          <div
+            key={i}
+            className="text-xl text-[#1A1A1A] leading-relaxed"
+            style={{
+              writingMode: "vertical-rl",
+              textOrientation: "mixed",
+              fontFamily: "var(--font-kaisei)",
+            }}
+          >
+            {line}
+          </div>
+        ))}
       </div>
 
       {/* Reactions */}
