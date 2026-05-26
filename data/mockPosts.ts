@@ -71,7 +71,7 @@ export const initialMockPosts: Post[] = [
     userId: "taro",
     username: "たろう",
     avatar: "🐻",
-    lines: ["ダイエット", "今日ぐらいはと", "肉食った"],
+    lines: ["ダイエット", "今日ぐらいはと", "超食った"],
     timestamp: new Date(Date.now() - 1000 * 60 * 1),
     stamps: [
       { emoji: "😂", username: "ゆうき" },
