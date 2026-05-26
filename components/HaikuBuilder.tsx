@@ -89,7 +89,7 @@ function SlotEditor({
           onClick={() => shuffleCandidates(slotIndex)}
           className="text-xs text-[#2C4A7C] underline"
         >
-          候補をシャッフル ⟳
+          別の候補 ⟳
         </button>
       </div>
 
