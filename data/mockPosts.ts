@@ -34,7 +34,15 @@ export const initialMockPosts: Post[] = [
       { emoji: "😂", username: "さくら" },
       { emoji: "🥲", username: "みお" },
     ],
-    redPenComments: [],
+    redPenComments: [
+      {
+        id: "rpc1",
+        authorId: "taro",
+        authorName: "たろう",
+        text: "それ昨日の俺やん",
+        timestamp: new Date(Date.now() - 1000 * 60 * 2),
+      },
+    ],
   },
   {
     id: "post2",
@@ -48,7 +56,15 @@ export const initialMockPosts: Post[] = [
       { emoji: "🥲", username: "たろう" },
       { emoji: "🈴", username: "みお" },
     ],
-    redPenComments: [],
+    redPenComments: [
+      {
+        id: "rpc2",
+        authorId: "yuki",
+        authorName: "ゆうき",
+        text: "季語がないから不合格",
+        timestamp: new Date(Date.now() - 1000 * 60 * 1),
+      },
+    ],
   },
   {
     id: "post3",
