@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { Part, getRandomParts } from "@/data/parts";
-import { Post, RedPenComment, initialMockPosts } from "@/data/mockPosts";
+import { Post, Stamp, RedPenComment, initialMockPosts } from "@/data/mockPosts";
 
 export interface SlotState {
   candidates: Part[];
@@ -28,7 +28,7 @@ interface AppState {
   shuffleCandidates: (slotIndex: 0 | 1 | 2) => void;
   setTextInput: (text: string) => void;
   submitPost: (lines: [string, string, string]) => void;
-  addStamp: (postId: string) => void;
+  addStamp: (postId: string, emoji: string) => void;
   removeStamp: (postId: string) => void;
   addRedPenComment: (postId: string, text: string) => void;
 }
@@ -109,20 +109,22 @@ export const useAppStore = create<AppState>((set) => ({
     }));
   },
 
-  addStamp: (postId) =>
+  addStamp: (postId, emoji) =>
     set((state) => ({
-      posts: state.posts.map((p) =>
-        p.id === postId && !p.stamps.includes("me")
-          ? { ...p, stamps: [...p.stamps, "me"] }
-          : p
-      ),
+      posts: state.posts.map((p) => {
+        if (p.id !== postId) return p;
+        // Replace existing stamp from "あなた" (one reaction per user)
+        const filtered = p.stamps.filter((s) => s.username !== "あなた");
+        const newStamp: Stamp = { emoji, username: "あなた" };
+        return { ...p, stamps: [...filtered, newStamp] };
+      }),
     })),
 
   removeStamp: (postId) =>
     set((state) => ({
       posts: state.posts.map((p) =>
         p.id === postId
-          ? { ...p, stamps: p.stamps.filter((id) => id !== "me") }
+          ? { ...p, stamps: p.stamps.filter((s) => s.username !== "あなた") }
           : p
       ),
     })),

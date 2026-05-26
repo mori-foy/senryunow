@@ -42,11 +42,9 @@ export default function PostCard({ post }: { post: Post }) {
       </div>
 
       {/* Reactions */}
-      <div className="flex items-start gap-3 pt-3 border-t border-[#D4C9B8]/50">
+      <div className="pt-3 border-t border-[#D4C9B8]/50 space-y-3">
         <StampButton postId={post.id} />
-        <div className="flex-1">
-          <RedPenComment postId={post.id} />
-        </div>
+        <RedPenComment postId={post.id} />
       </div>
     </div>
   );

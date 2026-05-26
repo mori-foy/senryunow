@@ -1,3 +1,8 @@
+export interface Stamp {
+  emoji: string;
+  username: string;
+}
+
 export interface RedPenComment {
   id: string;
   authorId: string;
@@ -13,7 +18,7 @@ export interface Post {
   avatar: string;
   lines: [string, string, string];
   timestamp: Date;
-  stamps: string[];
+  stamps: Stamp[];
   redPenComments: RedPenComment[];
 }
 
@@ -25,7 +30,10 @@ export const initialMockPosts: Post[] = [
     avatar: "😎",
     lines: ["スマホ見て", "夜が明けてた", "また今日も"],
     timestamp: new Date(Date.now() - 1000 * 60 * 3),
-    stamps: [],
+    stamps: [
+      { emoji: "😂", username: "さくら" },
+      { emoji: "🥲", username: "みお" },
+    ],
     redPenComments: [],
   },
   {
@@ -35,7 +43,11 @@ export const initialMockPosts: Post[] = [
     avatar: "🌸",
     lines: ["桜散る", "ライン既読で", "春終わる"],
     timestamp: new Date(Date.now() - 1000 * 60 * 2),
-    stamps: [],
+    stamps: [
+      { emoji: "💯", username: "ゆうき" },
+      { emoji: "🥲", username: "たろう" },
+      { emoji: "🈴", username: "みお" },
+    ],
     redPenComments: [],
   },
   {
@@ -45,7 +57,9 @@ export const initialMockPosts: Post[] = [
     avatar: "🐻",
     lines: ["コンビニで", "迷ってる俺", "また肉まん"],
     timestamp: new Date(Date.now() - 1000 * 60 * 1),
-    stamps: [],
+    stamps: [
+      { emoji: "😂", username: "ゆうき" },
+    ],
     redPenComments: [],
   },
   {
