@@ -16,33 +16,36 @@ function SlotEditor({
   slotIndex: 0 | 1 | 2;
   target: number;
   label: string;
-  onLineChange: (text: string) => void;
+  onLineChange: (text: string, mora: number) => void;
 }) {
   const { slots, shuffleCandidates } = useAppStore();
   const slot = slots[slotIndex];
 
   const [partText, setPartText] = useState("");
+  const [partMora, setPartMora] = useState(0);
   const [freeText, setFreeText] = useState("");
 
   const isPartsMode = partText !== "";
   const activeText = isPartsMode ? partText : freeText;
-  const mora = countMora(activeText);
+  const mora = isPartsMode ? partMora : countMora(freeText);
   const isOver = mora > target;
   const isExact = mora === target;
 
   useEffect(() => {
-    onLineChange(activeText);
+    onLineChange(activeText, mora);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeText]);
+  }, [activeText, mora]);
 
   const handleClear = () => {
     setPartText("");
+    setPartMora(0);
     setFreeText("");
   };
 
-  const handlePartTap = (text: string) => {
+  const handlePartTap = (text: string, m: number) => {
     setFreeText("");
     setPartText((prev) => prev + text);
+    setPartMora((prev) => prev + m);
   };
 
   return (
@@ -61,7 +64,7 @@ function SlotEditor({
         </span>
       </div>
 
-      {/* Single box — input when empty, read-only display when parts selected */}
+      {/* Single box */}
       <div className="relative mb-3">
         {isPartsMode ? (
           <div
@@ -105,7 +108,7 @@ function SlotEditor({
         {slot.candidates.map((part) => (
           <button
             key={part.id}
-            onClick={() => handlePartTap(part.text)}
+            onClick={() => handlePartTap(part.text, part.mora)}
             className="px-2.5 py-1 text-sm rounded-lg border transition-all active:scale-95 bg-white text-[#1A1A1A] border-[#2C4A7C]/30 hover:border-[#2C4A7C] hover:bg-[#2C4A7C]/5"
           >
             <span style={{ fontFamily: "var(--font-kaisei)" }}>{part.text}</span>
@@ -123,7 +126,11 @@ export default function HaikuBuilder({
   onValidChange: (valid: boolean, lines: [string, string, string]) => void;
 }) {
   const { initCandidates } = useAppStore();
-  const [lines, setLines] = useState<[string, string, string]>(["", "", ""]);
+  const [lineData, setLineData] = useState<{ text: string; mora: number }[]>([
+    { text: "", mora: 0 },
+    { text: "", mora: 0 },
+    { text: "", mora: 0 },
+  ]);
 
   const initialized = useRef(false);
   useEffect(() => {
@@ -133,16 +140,17 @@ export default function HaikuBuilder({
     }
   }, [initCandidates]);
 
-  const handleLineChange = (i: 0 | 1 | 2, text: string) => {
-    setLines((prev) => {
-      const next = [...prev] as [string, string, string];
-      next[i] = text;
+  const handleLineChange = (i: 0 | 1 | 2, text: string, mora: number) => {
+    setLineData((prev) => {
+      const next = [...prev];
+      next[i] = { text, mora };
       return next;
     });
   };
 
   const moraTargets: [number, number, number] = [5, 7, 5];
-  const isValid = [0, 1, 2].every((i) => countMora(lines[i]) === moraTargets[i]);
+  const isValid = [0, 1, 2].every((i) => lineData[i].mora === moraTargets[i]);
+  const lines = lineData.map((d) => d.text) as [string, string, string];
 
   useEffect(() => {
     onValidChange(isValid, lines);
@@ -157,7 +165,7 @@ export default function HaikuBuilder({
           slotIndex={i as 0 | 1 | 2}
           target={target}
           label={SLOT_LABELS[i]}
-          onLineChange={(text) => handleLineChange(i as 0 | 1 | 2, text)}
+          onLineChange={(text, mora) => handleLineChange(i as 0 | 1 | 2, text, mora)}
         />
       ))}
     </div>
