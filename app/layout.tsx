@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Reggae_One, Noto_Sans_JP } from "next/font/google";
+import { Yuji_Boku, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
-const reggaeOne = Reggae_One({
+const yujiBoku = Yuji_Boku({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-kaisei",
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${reggaeOne.variable} ${notoSansJP.variable} h-full`}
+      className={`${yujiBoku.variable} ${notoSansJP.variable} h-full`}
     >
       <body className="min-h-full">{children}</body>
     </html>
