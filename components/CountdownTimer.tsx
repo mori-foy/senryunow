@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useAppStore } from "@/store/useAppStore";
-import { toKanji } from "@/lib/kanjiNumber";
 
 export default function CountdownTimer() {
   const { remainingSeconds, isExpired, tickTimer } = useAppStore();
@@ -20,9 +19,7 @@ export default function CountdownTimer() {
 
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
-  const timeStr = toKanji(
-    `${String(minutes).padStart(2, "0")}：${String(seconds).padStart(2, "0")}`
-  );
+  const timeStr = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   const isUrgent = remainingSeconds <= 60 && !isExpired;
   const isCritical = remainingSeconds <= 30 && !isExpired;

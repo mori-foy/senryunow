@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { Part } from "@/data/parts";
-import { toKanji } from "@/lib/kanjiNumber";
 
 const SLOT_TARGETS: [number, number, number] = [5, 7, 5];
 const SLOT_LABELS = ["上の句", "中の句", "下の句"];
@@ -28,7 +27,7 @@ function SlotEditor({
     <div className="bg-white/60 rounded-2xl p-4 border border-[#D4C9B8] mb-3">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-[#2C4A7C]">
-          {label}（{toKanji(target)}音）
+          {label}（{target}音）
         </span>
         <span
           className={`text-sm font-bold ${
@@ -39,7 +38,7 @@ function SlotEditor({
               : "text-gray-500"
           }`}
         >
-          {toKanji(totalMora)}/{toKanji(target)}音
+          {totalMora}/{target}音
           {isExact && " ✓"}
           {isOver && " ！"}
         </span>
@@ -88,7 +87,7 @@ function SlotEditor({
               <span style={{ fontFamily: "var(--font-kaisei)" }}>
                 {part.text}
               </span>
-              <span className="text-xs text-gray-400 ml-1">({toKanji(part.mora)})</span>
+              <span className="text-xs text-gray-400 ml-1">({part.mora})</span>
             </button>
           );
         })}
