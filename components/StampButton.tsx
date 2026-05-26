@@ -51,7 +51,7 @@ export default function StampButton({ postId }: { postId: string }) {
           <span
             className={`flex items-center justify-center w-10 h-10 rounded-full text-xl border-2 ${
               stamp.username === MY_USERNAME
-                ? "border-[#C0392B] bg-[#C0392B]/10"
+                ? "border-[#3A7D55] bg-[#3A7D55]/10"
                 : "border-gray-200 bg-white"
             }`}
           >
@@ -84,7 +84,7 @@ export default function StampButton({ postId }: { postId: string }) {
                 onClick={() => handleSelect(emoji)}
                 className={`w-11 h-11 rounded-xl text-2xl flex items-center justify-center transition-all active:scale-90 ${
                   myStamp?.emoji === emoji
-                    ? "bg-[#C0392B]/10 ring-2 ring-[#C0392B]"
+                    ? "bg-[#3A7D55]/10 ring-2 ring-[#3A7D55]"
                     : "hover:bg-gray-100"
                 }`}
               >

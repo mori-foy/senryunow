@@ -108,7 +108,7 @@ export default function HomePage() {
         disabled={!isValid || isExpired || submitting}
         className={`w-full py-4 rounded-2xl text-lg font-bold transition-all duration-200 mt-2 ${
           isValid && !isExpired
-            ? "bg-[#C0392B] text-white shadow-lg active:scale-95"
+            ? "bg-[#3A7D55] text-white shadow-lg active:scale-95"
             : "bg-gray-200 text-gray-400 cursor-not-allowed"
         }`}
         style={{ fontFamily: "var(--font-kaisei)" }}
