@@ -24,8 +24,8 @@ function SlotEditor({
   const [partText, setPartText] = useState("");
   const [freeText, setFreeText] = useState("");
 
-  // freeText takes priority; if empty, use parts
-  const activeText = freeText !== "" ? freeText : partText;
+  const isPartsMode = partText !== "";
+  const activeText = isPartsMode ? partText : freeText;
   const mora = countMora(activeText);
   const isOver = mora > target;
   const isExact = mora === target;
@@ -36,8 +36,13 @@ function SlotEditor({
   }, [activeText]);
 
   const handleClear = () => {
-    if (freeText !== "") setFreeText("");
-    else setPartText("");
+    setPartText("");
+    setFreeText("");
+  };
+
+  const handlePartTap = (text: string) => {
+    setFreeText("");
+    setPartText((prev) => prev + text);
   };
 
   return (
@@ -56,36 +61,29 @@ function SlotEditor({
         </span>
       </div>
 
-      {/* Display area */}
-      <div className="flex items-center min-h-[44px] mb-2 px-3 py-2 bg-[#F5F0E8] rounded-xl border border-dashed border-[#C0392B]/30">
-        {activeText ? (
-          <span
-            className="text-xl text-[#1A1A1A] leading-relaxed"
+      {/* Single box — input when empty, read-only display when parts selected */}
+      <div className="relative mb-3">
+        {isPartsMode ? (
+          <div
+            className="w-full px-3 py-3 min-h-[52px] text-xl rounded-xl border border-[#2C4A7C]/40 bg-[#F5F0E8] text-[#1A1A1A] pr-10"
             style={{ fontFamily: "var(--font-kaisei)" }}
           >
             {activeText}
-          </span>
+          </div>
         ) : (
-          <span className="text-xs text-gray-400">
-            下のボックスに入力、または候補をタップ
-          </span>
+          <input
+            type="text"
+            value={freeText}
+            onChange={(e) => setFreeText(e.target.value)}
+            placeholder="タップして入力、または下の候補から選択"
+            className="w-full px-3 py-3 text-xl rounded-xl border border-[#2C4A7C]/40 bg-white focus:outline-none focus:border-[#2C4A7C] pr-10"
+            style={{ fontFamily: "var(--font-kaisei)" }}
+          />
         )}
-      </div>
-
-      {/* Text input */}
-      <div className="flex gap-2 mb-2">
-        <input
-          type="text"
-          value={freeText}
-          onChange={(e) => setFreeText(e.target.value)}
-          placeholder={label + "を直接入力…"}
-          className="flex-1 px-3 py-2 text-lg rounded-xl border border-[#2C4A7C]/40 bg-white focus:outline-none focus:border-[#2C4A7C]"
-          style={{ fontFamily: "var(--font-kaisei)" }}
-        />
         <button
           onClick={handleClear}
           disabled={activeText === ""}
-          className="px-3 py-2 rounded-xl border border-red-300 text-red-400 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-red-400 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           aria-label="クリア"
         >
           ✕
@@ -107,7 +105,7 @@ function SlotEditor({
         {slot.candidates.map((part) => (
           <button
             key={part.id}
-            onClick={() => setPartText((prev) => prev + part.text)}
+            onClick={() => handlePartTap(part.text)}
             className="px-2.5 py-1 text-sm rounded-lg border transition-all active:scale-95 bg-white text-[#1A1A1A] border-[#2C4A7C]/30 hover:border-[#2C4A7C] hover:bg-[#2C4A7C]/5"
           >
             <span style={{ fontFamily: "var(--font-kaisei)" }}>{part.text}</span>
