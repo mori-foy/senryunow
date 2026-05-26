@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { countMora } from "@/lib/moraCounts";
+import { toKanji } from "@/lib/kanjiNumber";
 
 export default function HaikuTextInput({
   onValidChange,
@@ -68,8 +69,8 @@ export default function HaikuTextInput({
                   }
                 >
                   {count === target
-                    ? `${count}音 ✓`
-                    : `${count}音（${target}音必要）`}
+                    ? `${toKanji(count)}音 ✓`
+                    : `${toKanji(count)}音（${toKanji(target)}音必要）`}
                 </span>
               </div>
             );
