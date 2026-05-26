@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Dela_Gothic_One, Noto_Sans_JP } from "next/font/google";
+import { Reggae_One, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
-const delaGothicOne = Dela_Gothic_One({
+const reggaeOne = Reggae_One({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-kaisei",
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${delaGothicOne.variable} ${notoSansJP.variable} h-full`}
+      className={`${reggaeOne.variable} ${notoSansJP.variable} h-full`}
     >
       <body className="min-h-full">{children}</body>
     </html>
