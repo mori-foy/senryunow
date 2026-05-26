@@ -60,9 +60,9 @@ export const useAppStore = create<AppState>((set) => ({
   initCandidates: () =>
     set({
       slots: [
-        { candidates: getRandomParts(6), selected: [] },
-        { candidates: getRandomParts(6), selected: [] },
-        { candidates: getRandomParts(6), selected: [] },
+        { candidates: getRandomParts(10), selected: [] },
+        { candidates: getRandomParts(10), selected: [] },
+        { candidates: getRandomParts(10), selected: [] },
       ],
     }),
 
@@ -85,7 +85,7 @@ export const useAppStore = create<AppState>((set) => ({
       const slots = [...state.slots] as [SlotState, SlotState, SlotState];
       const slot = { ...slots[slotIndex] };
       const excludeIds = slot.selected.map((p) => p.id);
-      slot.candidates = getRandomParts(6, excludeIds);
+      slot.candidates = getRandomParts(10, excludeIds);
       slots[slotIndex] = slot;
       return { slots };
     }),
