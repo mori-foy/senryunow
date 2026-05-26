@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import CountdownTimer from "@/components/CountdownTimer";
 import HaikuBuilder from "@/components/HaikuBuilder";
 import HaikuTextInput from "@/components/HaikuTextInput";
@@ -62,12 +63,14 @@ export default function HomePage() {
     <main className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
       {/* Header */}
       <div className="text-center mb-4">
-        <h1
-          className="text-3xl font-bold text-[#1A1A1A]"
-          style={{ fontFamily: "var(--font-kaisei)" }}
-        >
-          川柳なう
-        </h1>
+        <Image
+          src="/logo_senryunow.png"
+          alt="川柳なう。"
+          width={240}
+          height={80}
+          className="mx-auto"
+          priority
+        />
         <p className="text-xs text-gray-400 mt-1">今日の一句を詠んでください</p>
       </div>
 

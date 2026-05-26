@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import PostCard from "@/components/PostCard";
 import { useAppStore } from "@/store/useAppStore";
 
@@ -39,12 +39,13 @@ export default function FeedPage() {
         >
           ← 戻る
         </button>
-        <h1
-          className="text-2xl font-bold text-[#1A1A1A]"
-          style={{ fontFamily: "var(--font-kaisei)" }}
-        >
-          みんなの句
-        </h1>
+        <Image
+          src="/logo_senryunow.png"
+          alt="川柳なう。"
+          width={140}
+          height={46}
+          priority
+        />
         <div className="w-12" />
       </div>
 
