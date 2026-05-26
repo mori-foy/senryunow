@@ -64,14 +64,24 @@ function SlotEditor({
       </div>
 
       {/* Text input */}
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => onTextChange(e.target.value)}
-        placeholder={label + "を入力…"}
-        className="w-full px-3 py-2 mb-2 text-lg rounded-xl border border-[#2C4A7C]/40 bg-white focus:outline-none focus:border-[#2C4A7C]"
-        style={{ fontFamily: "var(--font-kaisei)" }}
-      />
+      <div className="flex gap-2 mb-2">
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => onTextChange(e.target.value)}
+          placeholder={label + "を入力…"}
+          className="flex-1 px-3 py-2 text-lg rounded-xl border border-[#2C4A7C]/40 bg-white focus:outline-none focus:border-[#2C4A7C]"
+          style={{ fontFamily: "var(--font-kaisei)" }}
+        />
+        <button
+          onClick={() => onTextChange("")}
+          disabled={!text}
+          className="px-3 py-2 rounded-xl border border-red-300 text-red-400 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          aria-label="クリア"
+        >
+          ✕
+        </button>
+      </div>
 
       {/* Shuffle button */}
       <div className="flex justify-end mb-2">
