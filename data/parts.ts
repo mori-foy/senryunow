@@ -170,8 +170,10 @@ export const allParts: Part[] = [
   { id: "p407", text: "ガチで泣いてた", reading: "がちでないてた", mora: 7 },
 ];
 
-export function getRandomParts(count: number, exclude: string[] = []): Part[] {
-  const available = allParts.filter((p) => !exclude.includes(p.id));
+export function getRandomParts(count: number, exclude: string[] = [], maxMora?: number): Part[] {
+  const available = allParts.filter(
+    (p) => !exclude.includes(p.id) && (maxMora === undefined || p.mora <= maxMora)
+  );
   const shuffled = [...available].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 }
