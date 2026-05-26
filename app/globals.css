@@ -16,10 +16,15 @@
 }
 
 body {
-  background-color: var(--background);
-  /* 紗綾形（さやがた）— 卍を繋いだ伝統的な幾何学模様 */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M0,6 H6 V0 M6,0 V6 H12 M12,0 V6 H18 M18,0 V6 H24 M24,6 V12 H18 M18,12 V6 H12 M12,12 V6 H6 M6,12 V6 H0 M0,12 V18 H6 M6,18 V12 H12 M12,18 V12 H18 M18,18 V12 H24 M24,18 V24 H18 M18,24 V18 H12 M12,24 V18 H6 M6,24 V18 H0' fill='none' stroke='rgba(55,105,60,0.15)' stroke-width='1'/%3E%3C/svg%3E");
-  background-size: 24px 24px;
+  background-color: #D8E8D4;
+  /* 青海波（せいがいは）— radial-gradientで重なり合う半円の鱗模様 */
+  background-image:
+    radial-gradient(circle at 100% 150%, #D8E8D4 24%, rgba(55,110,65,.13) 24%, rgba(55,110,65,.13) 28%, #D8E8D4 28%, #D8E8D4 36%, rgba(55,110,65,.08) 36%, rgba(55,110,65,.08) 40%, #D8E8D4 41%),
+    radial-gradient(circle at 0    150%, #D8E8D4 24%, rgba(55,110,65,.13) 24%, rgba(55,110,65,.13) 28%, #D8E8D4 28%, #D8E8D4 36%, rgba(55,110,65,.08) 36%, rgba(55,110,65,.08) 40%, #D8E8D4 41%),
+    radial-gradient(farthest-side  at 50% -50%, rgba(55,110,65,.13) 0%, #D8E8D4 100%),
+    radial-gradient(closest-side   at 50%  50%, rgba(55,110,65,.09) 0%, rgba(55,110,65,.04) 40%, #D8E8D4 100%);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px, 0 0, 20px 20px;
   color: var(--foreground);
   font-family: var(--font-noto), "Noto Sans JP", sans-serif;
   -webkit-font-smoothing: antialiased;
