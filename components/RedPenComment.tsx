@@ -52,7 +52,7 @@ export default function RedPenComment({ postId }: { postId: string }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="例：これ昨日の俺やないかい"
-            className="flex-1 px-3 py-1.5 text-sm border border-[#C0392B]/40 rounded-lg focus:outline-none focus:border-[#C0392B] bg-white"
+            className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-[#C0392B]/40 rounded-lg focus:outline-none focus:border-[#C0392B] bg-white"
             autoFocus
           />
           <button
