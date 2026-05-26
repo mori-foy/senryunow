@@ -5,13 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import CountdownTimer from "@/components/CountdownTimer";
 import HaikuBuilder from "@/components/HaikuBuilder";
-import HaikuTextInput from "@/components/HaikuTextInput";
 import { useAppStore } from "@/store/useAppStore";
 
 export default function HomePage() {
   const router = useRouter();
-  const { isExpired, hasPosted, inputMode, setInputMode, submitPost } =
-    useAppStore();
+  const { isExpired, hasPosted, submitPost } = useAppStore();
 
   const [isValid, setIsValid] = useState(false);
   const [pendingLines, setPendingLines] = useState<[string, string, string]>([
@@ -77,37 +75,9 @@ export default function HomePage() {
       {/* Countdown */}
       <CountdownTimer />
 
-      {/* Mode switcher */}
-      <div className="flex bg-white/50 rounded-xl p-1 mb-4 border border-[#D4C9B8]">
-        <button
-          onClick={() => setInputMode("parts")}
-          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
-            inputMode === "parts"
-              ? "bg-[#2C4A7C] text-white shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          パーツ選択
-        </button>
-        <button
-          onClick={() => setInputMode("text")}
-          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
-            inputMode === "text"
-              ? "bg-[#2C4A7C] text-white shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          テキスト入力
-        </button>
-      </div>
-
       {/* Input area */}
       <div className="flex-1">
-        {inputMode === "parts" ? (
-          <HaikuBuilder onValidChange={handleValidChange} />
-        ) : (
-          <HaikuTextInput onValidChange={handleValidChange} />
-        )}
+        <HaikuBuilder onValidChange={handleValidChange} />
       </div>
 
       {/* Preview — vertical writing */}

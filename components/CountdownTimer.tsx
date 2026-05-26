@@ -34,12 +34,12 @@ export default function CountdownTimer() {
       </div>
 
       {/* Timer bar */}
-      <div className="bg-[#F5F0E8]/90 backdrop-blur-sm border-b border-[#D4C9B8] px-4 py-1.5 flex justify-end items-center max-w-md mx-auto w-full">
+      <div className="bg-[#F5F0E8]/90 backdrop-blur-sm border-b border-[#D4C9B8] px-4 py-2 flex justify-center items-center max-w-md mx-auto w-full">
         {isExpired ? (
-          <span className="text-sm font-bold text-red-600 font-mono">時間切れ</span>
+          <span className="text-base font-bold text-red-600 font-mono">時間切れ</span>
         ) : (
           <span
-            className={`text-sm font-bold font-mono tracking-widest transition-colors ${
+            className={`text-base font-bold font-mono tracking-widest transition-colors ${
               isCritical ? "text-red-600 animate-pulse" : isUrgent ? "text-red-500" : "text-[#2C4A7C]"
             }`}
           >
