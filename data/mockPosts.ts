@@ -28,7 +28,7 @@ export const initialMockPosts: Post[] = [
     userId: "yuki",
     username: "ゆうき",
     avatar: "😎",
-    lines: ["スマホ見て", "夜が明けてた", "また今日も"],
+    lines: ["寝るつもり", "スマホ見てたら", "もう夜明け"],
     timestamp: new Date(Date.now() - 1000 * 60 * 3),
     stamps: [
       { emoji: "😂", username: "さくら" },
@@ -49,7 +49,7 @@ export const initialMockPosts: Post[] = [
     userId: "sakura",
     username: "さくら",
     avatar: "🌸",
-    lines: ["桜散る", "ライン既読で", "春終わる"],
+    lines: ["好きだよと", "送ったあとの", "3時間"],
     timestamp: new Date(Date.now() - 1000 * 60 * 2),
     stamps: [
       { emoji: "💯", username: "ゆうき" },
@@ -71,7 +71,7 @@ export const initialMockPosts: Post[] = [
     userId: "taro",
     username: "たろう",
     avatar: "🐻",
-    lines: ["コンビニで", "迷ってる俺", "また肉まん"],
+    lines: ["ダイエット", "今日ぐらいはと", "肉食った"],
     timestamp: new Date(Date.now() - 1000 * 60 * 1),
     stamps: [
       { emoji: "😂", username: "ゆうき" },
@@ -83,7 +83,7 @@ export const initialMockPosts: Post[] = [
     userId: "mio",
     username: "みお",
     avatar: "🦋",
-    lines: ["眠いのに", "目が冴えてる", "3時すぎ"],
+    lines: ["推し活で", "財布が空に", "また課金"],
     timestamp: new Date(Date.now() - 1000 * 30),
     stamps: [],
     redPenComments: [],
