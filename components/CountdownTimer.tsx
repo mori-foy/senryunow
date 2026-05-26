@@ -34,7 +34,7 @@ export default function CountdownTimer() {
       </div>
 
       {/* Timer bar */}
-      <div className="bg-[#C4DCC0]/90 backdrop-blur-sm border-b border-[#D4C9B8] px-4 py-2 flex justify-center items-center max-w-md mx-auto w-full">
+      <div className="bg-[#A8D4B4]/95 backdrop-blur-sm border-b border-[#D4C9B8] px-4 py-2 flex justify-center items-center max-w-md mx-auto w-full">
         {isExpired ? (
           <span className="text-base font-bold text-red-600 font-mono">時間切れ</span>
         ) : (
