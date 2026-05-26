@@ -83,7 +83,7 @@ export const initialMockPosts: Post[] = [
     userId: "mio",
     username: "みお",
     avatar: "🦋",
-    lines: ["推し活で", "財布が空に", "また課金"],
+    lines: ["月曜日", "なぜかバナナを", "投げた俺"],
     timestamp: new Date(Date.now() - 1000 * 30),
     stamps: [],
     redPenComments: [],
