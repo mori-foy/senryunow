@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #D8E8D4;
+  --background: #C4DCC0;
   --foreground: #1A1A1A;
   --accent: #C0392B;
   --sub: #2C4A7C;
-  --border: #B4CEB0;
+  --border: #9BBFA0;
 }
 
 @theme inline {
@@ -16,15 +16,16 @@
 }
 
 body {
-  background-color: #D8E8D4;
-  /* 青海波（せいがいは）— radial-gradientで重なり合う半円の鱗模様 */
+  background-color: #C4DCC0;
+  /* 青海波 — スケール大きめ・やや濃いめで文様を主張 */
   background-image:
-    radial-gradient(circle at 100% 150%, #D8E8D4 24%, rgba(55,110,65,.13) 24%, rgba(55,110,65,.13) 28%, #D8E8D4 28%, #D8E8D4 36%, rgba(55,110,65,.08) 36%, rgba(55,110,65,.08) 40%, #D8E8D4 41%),
-    radial-gradient(circle at 0    150%, #D8E8D4 24%, rgba(55,110,65,.13) 24%, rgba(55,110,65,.13) 28%, #D8E8D4 28%, #D8E8D4 36%, rgba(55,110,65,.08) 36%, rgba(55,110,65,.08) 40%, #D8E8D4 41%),
-    radial-gradient(farthest-side  at 50% -50%, rgba(55,110,65,.13) 0%, #D8E8D4 100%),
-    radial-gradient(closest-side   at 50%  50%, rgba(55,110,65,.09) 0%, rgba(55,110,65,.04) 40%, #D8E8D4 100%);
-  background-size: 40px 40px;
-  background-position: 0 0, 20px 20px, 0 0, 20px 20px;
+    radial-gradient(ellipse 100% 60% at 50% 40%, rgba(255,255,255,0.18) 0%, transparent 70%),
+    radial-gradient(circle at 100% 150%, #C4DCC0 24%, rgba(35,90,40,.20) 24%, rgba(35,90,40,.20) 28%, #C4DCC0 28%, #C4DCC0 36%, rgba(35,90,40,.12) 36%, rgba(35,90,40,.12) 40%, #C4DCC0 41%),
+    radial-gradient(circle at 0    150%, #C4DCC0 24%, rgba(35,90,40,.20) 24%, rgba(35,90,40,.20) 28%, #C4DCC0 28%, #C4DCC0 36%, rgba(35,90,40,.12) 36%, rgba(35,90,40,.12) 40%, #C4DCC0 41%),
+    radial-gradient(farthest-side  at 50% -50%, rgba(35,90,40,.20) 0%, #C4DCC0 100%),
+    radial-gradient(closest-side   at 50%  50%, rgba(35,90,40,.13) 0%, rgba(35,90,40,.06) 40%, #C4DCC0 100%);
+  background-size: 100% 100%, 52px 52px, 52px 52px, 52px 52px, 52px 52px;
+  background-position: 0 0, 0 0, 26px 26px, 0 0, 26px 26px;
   color: var(--foreground);
   font-family: var(--font-noto), "Noto Sans JP", sans-serif;
   -webkit-font-smoothing: antialiased;
