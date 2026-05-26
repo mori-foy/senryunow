@@ -23,6 +23,7 @@ interface AppState {
   tickTimer: () => void;
   expireTimer: () => void;
   setInputMode: (mode: InputMode) => void;
+  resetRound: () => void;
   initCandidates: () => void;
   togglePartSelection: (slotIndex: 0 | 1 | 2, part: Part) => void;
   shuffleCandidates: (slotIndex: 0 | 1 | 2) => void;
@@ -56,6 +57,15 @@ export const useAppStore = create<AppState>((set) => ({
   expireTimer: () => set({ remainingSeconds: 0, isExpired: true }),
 
   setInputMode: (mode) => set({ inputMode: mode }),
+
+  resetRound: () =>
+    set({
+      remainingSeconds: 300,
+      isExpired: false,
+      hasPosted: false,
+      slots: [emptySlot(), emptySlot(), emptySlot()],
+      textInput: "",
+    }),
 
   initCandidates: () =>
     set({

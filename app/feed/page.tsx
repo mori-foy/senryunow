@@ -1,11 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import PostCard from "@/components/PostCard";
 import { useAppStore } from "@/store/useAppStore";
 
 export default function FeedPage() {
-  const { isExpired, hasPosted, posts } = useAppStore();
+  const router = useRouter();
+  const { isExpired, hasPosted, posts, resetRound } = useAppStore();
+
+  const handleRetry = () => {
+    resetRound();
+    router.push("/");
+  };
 
   // If timer expired and user hasn't posted, they shouldn't be on this page
   const canView = hasPosted || !isExpired;
@@ -30,7 +37,8 @@ export default function FeedPage() {
   return (
     <main className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-center mb-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="w-20" />
         <Image
           src="/logo_senryunow.png"
           alt="川柳なう。"
@@ -38,6 +46,12 @@ export default function FeedPage() {
           height={46}
           priority
         />
+        <button
+          onClick={handleRetry}
+          className="text-sm font-medium text-white bg-[#3A7D55] px-3 py-1.5 rounded-xl active:scale-95 transition-all"
+        >
+          やり直す
+        </button>
       </div>
 
       {/* Posts */}
