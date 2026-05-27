@@ -41,7 +41,7 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
     <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
       <p className="text-[10px] text-gray-400 mb-2">{formatDate(post.date, post.createdAt)}</p>
       <button className="w-full" onClick={() => setDetailOpen(true)}>
-        <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "110px" }}>
+        <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "85px" }}>
           {lines.map((line, i) => (
             <div
               key={i}

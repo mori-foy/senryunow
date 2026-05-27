@@ -124,7 +124,7 @@ function PostMiniCard({
         className="w-full"
         onClick={() => setDetailOpen(true)}
       >
-        <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "110px" }}>
+        <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "85px" }}>
           {lines.map((line, i) => (
             <div
               key={i}
