@@ -4,7 +4,7 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { subscribeUserPosts, subscribePinnedPostId, type FirestorePost } from "@/lib/firestore";
+import { subscribeUserPosts, subscribePinnedPostId, subscribeReactions, type FirestorePost, type FirestoreReaction } from "@/lib/firestore";
 import PinnedPostCard from "@/components/PinnedPostCard";
 
 function getStatus(count: number): string {
@@ -22,10 +22,19 @@ function formatDate(dateStr: string): string {
 
 function PostMiniCard({ post }: { post: FirestorePost }) {
   const lines = post.haiku.split("／");
+  const [reactions, setReactions] = useState<FirestoreReaction[]>([]);
+
+  useEffect(() => {
+    return subscribeReactions(post.id, setReactions);
+  }, [post.id]);
+
+  const stamps = reactions.filter((r) => r.type === "stamp");
+  const comments = reactions.filter((r) => r.type === "redpen");
+
   return (
     <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
       <p className="text-[10px] text-gray-400 mb-2">{formatDate(post.date)}</p>
-      <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "160px" }}>
+      <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "110px" }}>
         {lines.map((line, i) => (
           <div
             key={i}
@@ -42,6 +51,16 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
           </div>
         ))}
       </div>
+      {(stamps.length > 0 || comments.length > 0) && (
+        <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-[#D4C9B8]/50">
+          {stamps.map((s) => (
+            <span key={s.id} className="text-xs">{s.emoji}</span>
+          ))}
+          {comments.length > 0 && (
+            <span className="text-[10px] text-[#C0392B] ml-auto">✏️ {comments.length}</span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -75,23 +94,27 @@ export default function PublicProfilePage({
   const photoURL = posts[0]?.photoURL ?? "";
 
   return (
-    <main className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => router.back()}
-          className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 transition-colors"
-        >
-          ←
-        </button>
-        <span
-          className="text-base font-bold text-[#1A1A1A]"
-          style={{ fontFamily: "var(--font-kaisei)" }}
-        >
-          プロフィール
-        </span>
-        <div className="w-10" />
+    <main className="min-h-screen flex flex-col max-w-md mx-auto">
+      {/* Fixed header */}
+      <div className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-sm border-b border-[#D4C9B8]">
+        <div className="flex items-center justify-between max-w-md mx-auto px-4 py-3">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            ←
+          </button>
+          <span
+            className="text-base font-bold text-[#1A1A1A]"
+            style={{ fontFamily: "var(--font-kaisei)" }}
+          >
+            プロフィール
+          </span>
+          <div className="w-10" />
+        </div>
       </div>
+      {/* Content */}
+      <div className="px-4 pt-20 pb-6">
 
       {/* User info */}
       <div className="flex flex-col items-center py-6 mb-6 bg-white/70 rounded-2xl border border-[#D4C9B8]">
@@ -154,6 +177,7 @@ export default function PublicProfilePage({
             </div>
           </div>
         )}
+      </div>
       </div>
     </main>
   );
