@@ -7,14 +7,6 @@ import {
   type FirestoreReaction,
 } from "@/lib/firestore";
 
-function rotationForId(id: string): number {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) {
-    hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
-  }
-  return ((hash % 300) - 150) / 100;
-}
-
 export default function RedPenComment({
   postId,
   currentUid,
@@ -53,7 +45,6 @@ export default function RedPenComment({
         <div
           key={comment.id}
           className="mb-2 px-3 py-1.5 bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg"
-          style={{ transform: `rotate(${rotationForId(comment.id)}deg)` }}
         >
           <p
             className="text-sm text-[#C0392B] font-medium"

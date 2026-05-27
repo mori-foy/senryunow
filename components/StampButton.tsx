@@ -55,7 +55,7 @@ export default function StampButton({
   };
 
   return (
-    <div className="flex flex-wrap items-end gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {stamps.map((stamp) => (
         <button
           key={stamp.id}
@@ -88,7 +88,6 @@ export default function StampButton({
           <span className="flex items-center justify-center w-10 h-10 rounded-full text-lg border-2 border-dashed border-gray-300 bg-white text-gray-400 hover:border-gray-400 transition-colors">
             +
           </span>
-          <span className="text-[10px] text-transparent leading-none">_</span>
         </button>
 
         {pickerOpen && (
