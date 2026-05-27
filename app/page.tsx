@@ -40,7 +40,11 @@ export default function HomePage() {
           );
           const data = await res.json();
           const addr = data.address ?? {};
-          const parts = [addr.state, addr.city ?? addr.town ?? addr.village].filter(Boolean);
+          // 区レベルを優先: city_district → suburb → city(区で終わる) → city → town → village
+          const ward = addr.city_district ?? addr.suburb;
+          const city = addr.city ?? addr.town ?? addr.village ?? "";
+          const area = ward ?? city;
+          const parts = [addr.state, area].filter(Boolean);
           setLocation(parts.length > 0 ? parts.join(" ") : "不明");
         } catch {
           setLocation("不明");
