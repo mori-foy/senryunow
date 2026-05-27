@@ -115,6 +115,7 @@ export default function HomePage() {
           priority
         />
         <p className="text-xs text-gray-400 mt-1">今日の一句を詠んでください</p>
+        <p className="text-xs text-gray-400 mt-0.5">ひらがなで入力すると文字数が正確に反映されます</p>
       </div>
 
       {/* Countdown */}

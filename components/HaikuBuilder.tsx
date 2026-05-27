@@ -52,7 +52,7 @@ function SlotEditor({
     <div className="bg-white/60 rounded-2xl p-4 border border-[#D4C9B8] mb-3">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-[#2C4A7C]">
+        <span className="text-sm font-bold text-[#2C4A7C]">
           {label}（{target}音）
         </span>
         <span

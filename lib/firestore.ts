@@ -8,6 +8,8 @@ import {
   where,
   onSnapshot,
   serverTimestamp,
+  getCountFromServer,
+  setDoc,
   Timestamp,
 } from "firebase/firestore";
 
@@ -108,6 +110,25 @@ export function addStamp(
 
 export function removeReaction(reactionId: string) {
   return deleteDoc(doc(db, "reactions", reactionId));
+}
+
+export function subscribePinnedPostId(
+  uid: string,
+  callback: (postId: string | null) => void
+) {
+  return onSnapshot(doc(db, "users", uid), (snap) => {
+    callback((snap.data()?.pinnedPostId as string) ?? null);
+  });
+}
+
+export async function setPinnedPost(uid: string, postId: string | null) {
+  await setDoc(doc(db, "users", uid), { pinnedPostId: postId }, { merge: true });
+}
+
+export async function getUserPostCount(uid: string): Promise<number> {
+  const q = query(collection(db, "posts"), where("uid", "==", uid));
+  const snap = await getCountFromServer(q);
+  return snap.data().count;
 }
 
 export function deletePost(postId: string) {

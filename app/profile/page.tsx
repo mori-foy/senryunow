@@ -5,14 +5,39 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "firebase/auth";
 import { useAuth } from "@/context/AuthContext";
-import { subscribeUserPosts, deletePost, type FirestorePost } from "@/lib/firestore";
+import {
+  subscribeUserPosts,
+  subscribePinnedPostId,
+  setPinnedPost,
+  deletePost,
+  type FirestorePost,
+} from "@/lib/firestore";
+import PinnedPostCard from "@/components/PinnedPostCard";
+
+function getStatus(count: number): string {
+  if (count <= 5) return "みならい";
+  if (count <= 10) return "一般人";
+  if (count <= 15) return "一人前";
+  if (count <= 20) return "玄人";
+  return "宗匠";
+}
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-");
   return `${year}年${Number(month)}月${Number(day)}日`;
 }
 
-function PostMiniCard({ post }: { post: FirestorePost }) {
+function PostMiniCard({
+  post,
+  isPinned,
+  onPin,
+  onUnpin,
+}: {
+  post: FirestorePost;
+  isPinned: boolean;
+  onPin: () => void;
+  onUnpin: () => void;
+}) {
   const lines = post.haiku.split("／");
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -35,43 +60,52 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
     <div className="bg-white/70 rounded-2xl p-4 border border-[#D4C9B8] shadow-sm">
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs text-gray-400">{formatDate(post.date)}</p>
-        {confirming ? (
-          <div className="flex items-center gap-2">
-            {error && <span className="text-xs text-red-500">{error}</span>}
-            {!error && <span className="text-xs text-gray-500">削除しますか？</span>}
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              className="text-xs text-white bg-red-500 px-2 py-0.5 rounded disabled:opacity-50"
-            >
-              {deleting ? "削除中..." : "削除"}
-            </button>
-            <button
-              onClick={() => { setConfirming(false); setError(null); }}
-              className="text-xs text-gray-400"
-            >
-              キャンセル
-            </button>
-          </div>
-        ) : (
+        <div className="flex items-center gap-2">
+          {/* Pin button */}
           <button
-            onClick={() => setConfirming(true)}
-            className="text-gray-300 hover:text-red-400 transition-colors"
-            aria-label="削除"
+            onClick={isPinned ? onUnpin : onPin}
+            className={`text-sm transition-colors ${isPinned ? "text-[#3A7D55]" : "text-gray-300 hover:text-[#3A7D55]"}`}
+            aria-label={isPinned ? "ピン解除" : "マイベストにピン止め"}
+            title={isPinned ? "ピン解除" : "マイベストにピン止め"}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-              <path d="M10 11v6M14 11v6" />
-              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-            </svg>
+            📌
           </button>
-        )}
+          {/* Delete */}
+          {confirming ? (
+            <div className="flex items-center gap-1.5">
+              {error && <span className="text-xs text-red-500">{error}</span>}
+              {!error && <span className="text-xs text-gray-500">削除？</span>}
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="text-xs text-white bg-red-500 px-2 py-0.5 rounded disabled:opacity-50"
+              >
+                {deleting ? "..." : "削除"}
+              </button>
+              <button
+                onClick={() => { setConfirming(false); setError(null); }}
+                className="text-xs text-gray-400"
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirming(true)}
+              className="text-gray-300 hover:text-red-400 transition-colors"
+              aria-label="削除"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
-      <div
-        className="flex flex-row-reverse justify-center gap-5"
-        style={{ height: "100px" }}
-      >
+      <div className="flex flex-row-reverse justify-center gap-5" style={{ height: "100px" }}>
         {lines.map((line, i) => (
           <div
             key={i}
@@ -95,18 +129,30 @@ export default function ProfilePage() {
   const { user, loading, signOut, refreshUser } = useAuth();
   const [posts, setPosts] = useState<FirestorePost[]>([]);
   const [postsLoaded, setPostsLoaded] = useState(false);
+  const [pinnedPostId, setPinnedPostId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     if (!user) return;
-    const unsub = subscribeUserPosts(user.uid, (p) => {
+    const unsubPosts = subscribeUserPosts(user.uid, (p) => {
       setPosts(p);
       setPostsLoaded(true);
     });
-    return unsub;
+    const unsubPin = subscribePinnedPostId(user.uid, setPinnedPostId);
+    return () => { unsubPosts(); unsubPin(); };
   }, [user]);
+
+  const handlePin = async (postId: string) => {
+    if (!user) return;
+    await setPinnedPost(user.uid, postId);
+  };
+
+  const handleUnpin = async () => {
+    if (!user) return;
+    await setPinnedPost(user.uid, null);
+  };
 
   const handleEditName = () => {
     setNameInput(user?.displayName ?? "");
@@ -139,6 +185,9 @@ export default function ProfilePage() {
     router.push("/");
     return null;
   }
+
+  const pinnedPost = posts.find((p) => p.id === pinnedPostId) ?? null;
+  const unpinnedPosts = posts.filter((p) => p.id !== pinnedPostId);
 
   return (
     <main className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
@@ -215,11 +264,13 @@ export default function ProfilePage() {
             </button>
           </div>
         )}
-        <p className="text-xs text-gray-400 mb-4">{user.email}</p>
-        <button
-          onClick={handleSignOut}
-          className="text-sm text-gray-400 underline"
-        >
+        {postsLoaded && (
+          <span className="text-xs font-bold text-[#3A7D55] bg-[#3A7D55]/10 px-3 py-1 rounded-full mb-1">
+            {getStatus(posts.length)}
+          </span>
+        )}
+        <p className="text-xs text-gray-400 mb-4 mt-1">{user.email}</p>
+        <button onClick={handleSignOut} className="text-sm text-gray-400 underline">
           ログアウト
         </button>
       </div>
@@ -232,9 +283,7 @@ export default function ProfilePage() {
         >
           過去の句
           {postsLoaded && (
-            <span className="text-gray-400 font-normal ml-2">
-              {posts.length}句
-            </span>
+            <span className="text-gray-400 font-normal ml-2">{posts.length}句</span>
           )}
         </h2>
 
@@ -244,8 +293,19 @@ export default function ProfilePage() {
           <p className="text-center text-gray-400 mt-8">まだ投稿がありません</p>
         ) : (
           <div className="grid grid-cols-1 gap-3">
-            {posts.map((post) => (
-              <PostMiniCard key={post.id} post={post} />
+            {/* Pinned post at top */}
+            {pinnedPost && (
+              <PinnedPostCard post={pinnedPost} postCount={posts.length} />
+            )}
+            {/* Rest of posts */}
+            {unpinnedPosts.map((post) => (
+              <PostMiniCard
+                key={post.id}
+                post={post}
+                isPinned={post.id === pinnedPostId}
+                onPin={() => handlePin(post.id)}
+                onUnpin={handleUnpin}
+              />
             ))}
           </div>
         )}

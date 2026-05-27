@@ -1,8 +1,9 @@
 "use client";
 
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 import StampButton from "./StampButton";
 import RedPenComment from "./RedPenComment";
+import UserAvatar from "./UserAvatar";
 import { type FirestorePost } from "@/lib/firestore";
 
 function formatTime(ts: { seconds: number } | null): string {
@@ -24,25 +25,25 @@ export default function PostCard({
   currentUid: string;
   currentDisplayName: string;
 }) {
+  const router = useRouter();
   const lines = post.haiku.split("／") as [string, string, string];
+  const isOwnPost = post.uid === currentUid;
 
   return (
     <div className="bg-white/70 rounded-2xl p-5 border border-[#D4C9B8] shadow-sm mb-4">
       {/* Author */}
       <div className="flex items-center gap-2 mb-4">
-        {post.photoURL ? (
-          <Image
-            src={post.photoURL}
-            alt={post.displayName}
-            width={36}
-            height={36}
-            className="rounded-full"
+        <button
+          onClick={() => !isOwnPost && router.push(`/profile/${post.uid}`)}
+          className={isOwnPost ? "cursor-default" : "active:scale-95 transition-transform"}
+        >
+          <UserAvatar
+            uid={post.uid}
+            photoURL={post.photoURL}
+            displayName={post.displayName}
+            size={36}
           />
-        ) : (
-          <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-sm">
-            {post.displayName[0] ?? "?"}
-          </div>
-        )}
+        </button>
         <div>
           <p className="font-medium text-[#1A1A1A] text-sm">{post.displayName}</p>
           <p className="text-xs text-gray-400">{formatTime(post.createdAt)}</p>
@@ -71,8 +72,8 @@ export default function PostCard({
 
       {/* Reactions */}
       <div className="pt-3 border-t border-[#D4C9B8]/50 space-y-3">
-        <StampButton postId={post.id} currentUid={currentUid} isOwnPost={post.uid === currentUid} />
-        <RedPenComment postId={post.id} currentUid={currentUid} currentDisplayName={currentDisplayName} isOwnPost={post.uid === currentUid} />
+        <StampButton postId={post.id} currentUid={currentUid} isOwnPost={isOwnPost} />
+        <RedPenComment postId={post.id} currentUid={currentUid} currentDisplayName={currentDisplayName} isOwnPost={isOwnPost} />
       </div>
     </div>
   );
