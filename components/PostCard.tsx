@@ -11,9 +11,12 @@ function formatTime(ts: { seconds: number } | null): string {
   const date = new Date(ts.seconds * 1000);
   const now = new Date();
   const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (diff < 60) return `${diff}秒前`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}分前`;
-  return `${Math.floor(diff / 3600)}時間前`;
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  const clock = `(${hh}:${mm})`;
+  if (diff < 60) return `${diff}秒前 ${clock}`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}分前 ${clock}`;
+  return `${Math.floor(diff / 3600)}時間前 ${clock}`;
 }
 
 export default function PostCard({
@@ -72,7 +75,7 @@ export default function PostCard({
 
       {/* Reactions */}
       <div className="pt-3 border-t border-[#D4C9B8]/50 space-y-3">
-        <StampButton postId={post.id} currentUid={currentUid} isOwnPost={isOwnPost} />
+        <StampButton postId={post.id} currentUid={currentUid} currentDisplayName={currentDisplayName} isOwnPost={isOwnPost} />
         <RedPenComment postId={post.id} currentUid={currentUid} currentDisplayName={currentDisplayName} isOwnPost={isOwnPost} />
       </div>
     </div>

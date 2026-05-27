@@ -8,15 +8,17 @@ import {
   type FirestoreReaction,
 } from "@/lib/firestore";
 
-const STAMP_OPTIONS = ["🈴", "💯", "😂", "🥲"];
+const STAMP_OPTIONS = ["🈴", "💯", "😂", "🥲", "🌸", "❤️", "🔥"];
 
 export default function StampButton({
   postId,
   currentUid,
+  currentDisplayName,
   isOwnPost,
 }: {
   postId: string;
   currentUid: string;
+  currentDisplayName: string;
   isOwnPost: boolean;
 }) {
   const [stamps, setStamps] = useState<FirestoreReaction[]>([]);
@@ -48,7 +50,7 @@ export default function StampButton({
       await removeReaction(myStamp.id);
     } else {
       if (myStamp) await removeReaction(myStamp.id);
-      await addStamp(postId, currentUid, "", emoji);
+      await addStamp(postId, currentUid, currentDisplayName, emoji);
     }
   };
 
@@ -90,7 +92,7 @@ export default function StampButton({
         </button>
 
         {pickerOpen && (
-          <div className="absolute bottom-14 left-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-2 flex gap-1 z-20">
+          <div className="absolute bottom-14 left-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-2 flex flex-wrap gap-1 z-20 w-[196px]">
             {STAMP_OPTIONS.map((emoji) => (
               <button
                 key={emoji}

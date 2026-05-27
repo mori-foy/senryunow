@@ -23,6 +23,7 @@ function formatDate(dateStr: string): string {
 function PostMiniCard({ post }: { post: FirestorePost }) {
   const lines = post.haiku.split("／");
   const [reactions, setReactions] = useState<FirestoreReaction[]>([]);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   useEffect(() => {
     return subscribeReactions(post.id, setReactions);
@@ -34,23 +35,25 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
   return (
     <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
       <p className="text-[10px] text-gray-400 mb-2">{formatDate(post.date)}</p>
-      <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "110px" }}>
-        {lines.map((line, i) => (
-          <div
-            key={i}
-            className="text-sm text-[#1A1A1A]"
-            style={{
-              writingMode: "vertical-rl",
-              textOrientation: "mixed",
-              fontFamily: "var(--font-kaisei)",
-              lineHeight: 1.6,
-              overflow: "hidden",
-            }}
-          >
-            {line}
-          </div>
-        ))}
-      </div>
+      <button className="w-full" onClick={() => setDetailOpen(true)}>
+        <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "110px" }}>
+          {lines.map((line, i) => (
+            <div
+              key={i}
+              className="text-sm text-[#1A1A1A]"
+              style={{
+                writingMode: "vertical-rl",
+                textOrientation: "mixed",
+                fontFamily: "var(--font-kaisei)",
+                lineHeight: 1.6,
+                overflow: "hidden",
+              }}
+            >
+              {line}
+            </div>
+          ))}
+        </div>
+      </button>
       {(stamps.length > 0 || comments.length > 0) && (
         <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-[#D4C9B8]/50">
           {stamps.map((s) => (
@@ -59,6 +62,71 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
           {comments.length > 0 && (
             <span className="text-[10px] text-[#C0392B] ml-auto">✏️ {comments.length}</span>
           )}
+        </div>
+      )}
+
+      {/* Detail modal */}
+      {detailOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6"
+          onClick={() => setDetailOpen(false)}
+        >
+          <div
+            className="bg-[#F5F0E8] rounded-2xl p-6 w-full max-w-sm max-h-[80vh] overflow-y-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-xs text-gray-400">{formatDate(post.date)}</p>
+              <button onClick={() => setDetailOpen(false)} className="text-gray-400 text-lg leading-none">✕</button>
+            </div>
+            <div className="flex flex-row-reverse justify-center gap-6 mb-6" style={{ height: "140px" }}>
+              {lines.map((line, i) => (
+                <div
+                  key={i}
+                  className="text-xl text-[#1A1A1A]"
+                  style={{
+                    writingMode: "vertical-rl",
+                    textOrientation: "mixed",
+                    fontFamily: "var(--font-kaisei)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {line}
+                </div>
+              ))}
+            </div>
+            {stamps.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-bold text-gray-500 mb-2">スタンプ</p>
+                <div className="flex flex-col gap-1.5">
+                  {stamps.map((s) => (
+                    <div key={s.id} className="flex items-center gap-2">
+                      <span className="text-lg">{s.emoji}</span>
+                      <span className="text-sm text-gray-700">{s.displayName}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {comments.length > 0 && (
+              <div>
+                <p className="text-xs font-bold text-gray-500 mb-2">赤ペン添削</p>
+                <div className="flex flex-col gap-2">
+                  {comments.map((c) => (
+                    <div key={c.id} className="bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg px-3 py-2">
+                      <p className="text-sm text-[#C0392B]" style={{ fontFamily: "var(--font-kaisei)" }}>
+                        ✏️ {c.comment}
+                      </p>
+                      <p className="text-xs text-red-400 mt-0.5">— {c.displayName}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {stamps.length === 0 && comments.length === 0 && (
+              <p className="text-center text-sm text-gray-400">まだリアクションがありません</p>
+            )}
+          </div>
         </div>
       )}
     </div>
