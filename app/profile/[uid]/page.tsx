@@ -50,7 +50,7 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
                 fontFamily: "var(--font-kaisei)",
-                fontSize: "12px",
+                fontSize: "15px",
                 lineHeight: 1.0,
               }}
             >
@@ -241,7 +241,7 @@ export default function PublicProfilePage({
                 postCount={posts.length}
               />
             )}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 items-start">
               {posts
                 .filter((p) => p.id !== pinnedPostId)
                 .map((post) => (

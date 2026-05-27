@@ -133,7 +133,7 @@ function PostMiniCard({
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
                 fontFamily: "var(--font-kaisei)",
-                fontSize: "12px",
+                fontSize: "15px",
                 lineHeight: 1.0,
               }}
             >
@@ -406,7 +406,7 @@ export default function ProfilePage() {
               <PinnedPostCard post={pinnedPost} postCount={posts.length} />
             )}
             {/* Rest of posts — 2 column grid */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 items-start">
             {unpinnedPosts.map((post) => (
               <PostMiniCard
                 key={post.id}
