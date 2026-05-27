@@ -57,45 +57,41 @@ function PostMiniCard({
   };
 
   return (
-    <div className="bg-white/70 rounded-2xl p-4 border border-[#D4C9B8] shadow-sm">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs text-gray-400">{formatDate(post.date)}</p>
-        <div className="flex items-center gap-2">
-          {/* Pin button */}
+    <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[10px] text-gray-400 leading-none">{formatDate(post.date)}</p>
+        <div className="flex items-center gap-1.5">
           <button
             onClick={isPinned ? onUnpin : onPin}
-            className={`text-sm transition-colors ${isPinned ? "text-[#3A7D55]" : "text-gray-300 hover:text-[#3A7D55]"}`}
+            className={`text-xs transition-colors ${isPinned ? "text-[#3A7D55]" : "text-gray-300 hover:text-[#3A7D55]"}`}
             aria-label={isPinned ? "ピン解除" : "マイベストにピン止め"}
-            title={isPinned ? "ピン解除" : "マイベストにピン止め"}
           >
             📌
           </button>
-          {/* Delete */}
           {confirming ? (
-            <div className="flex items-center gap-1.5">
-              {error && <span className="text-xs text-red-500">{error}</span>}
-              {!error && <span className="text-xs text-gray-500">削除？</span>}
+            <>
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="text-xs text-white bg-red-500 px-2 py-0.5 rounded disabled:opacity-50"
+                className="text-[10px] text-white bg-red-500 px-1.5 py-0.5 rounded disabled:opacity-50"
               >
-                {deleting ? "..." : "削除"}
+                {deleting ? "…" : "削除"}
               </button>
               <button
                 onClick={() => { setConfirming(false); setError(null); }}
-                className="text-xs text-gray-400"
+                className="text-[10px] text-gray-400"
               >
                 ✕
               </button>
-            </div>
+            </>
           ) : (
             <button
               onClick={() => setConfirming(true)}
               className="text-gray-300 hover:text-red-400 transition-colors"
               aria-label="削除"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="3 6 5 6 21 6" />
                 <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
                 <path d="M10 11v6M14 11v6" />
@@ -105,15 +101,19 @@ function PostMiniCard({
           )}
         </div>
       </div>
-      <div className="flex flex-row-reverse justify-center gap-5" style={{ height: "100px" }}>
+      {error && <p className="text-[10px] text-red-500 mb-1">{error}</p>}
+      {/* Haiku */}
+      <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "160px" }}>
         {lines.map((line, i) => (
           <div
             key={i}
-            className="text-lg text-[#1A1A1A] leading-relaxed"
+            className="text-sm text-[#1A1A1A]"
             style={{
               writingMode: "vertical-rl",
               textOrientation: "mixed",
               fontFamily: "var(--font-kaisei)",
+              lineHeight: 1.6,
+              overflow: "hidden",
             }}
           >
             {line}
@@ -292,12 +292,13 @@ export default function ProfilePage() {
         ) : posts.length === 0 ? (
           <p className="text-center text-gray-400 mt-8">まだ投稿がありません</p>
         ) : (
-          <div className="grid grid-cols-1 gap-3">
+          <div className="flex flex-col gap-3">
             {/* Pinned post at top */}
             {pinnedPost && (
               <PinnedPostCard post={pinnedPost} postCount={posts.length} />
             )}
-            {/* Rest of posts */}
+            {/* Rest of posts — 2 column grid */}
+            <div className="grid grid-cols-2 gap-3">
             {unpinnedPosts.map((post) => (
               <PostMiniCard
                 key={post.id}
@@ -307,6 +308,7 @@ export default function ProfilePage() {
                 onUnpin={handleUnpin}
               />
             ))}
+            </div>
           </div>
         )}
       </div>

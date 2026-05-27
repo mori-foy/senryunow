@@ -23,17 +23,19 @@ function formatDate(dateStr: string): string {
 function PostMiniCard({ post }: { post: FirestorePost }) {
   const lines = post.haiku.split("／");
   return (
-    <div className="bg-white/70 rounded-2xl p-4 border border-[#D4C9B8] shadow-sm">
-      <p className="text-xs text-gray-400 mb-3">{formatDate(post.date)}</p>
-      <div className="flex flex-row-reverse justify-center gap-5" style={{ height: "100px" }}>
+    <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
+      <p className="text-[10px] text-gray-400 mb-2">{formatDate(post.date)}</p>
+      <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "160px" }}>
         {lines.map((line, i) => (
           <div
             key={i}
-            className="text-lg text-[#1A1A1A] leading-relaxed"
+            className="text-sm text-[#1A1A1A]"
             style={{
               writingMode: "vertical-rl",
               textOrientation: "mixed",
               fontFamily: "var(--font-kaisei)",
+              lineHeight: 1.6,
+              overflow: "hidden",
             }}
           >
             {line}
@@ -136,18 +138,20 @@ export default function PublicProfilePage({
         ) : posts.length === 0 ? (
           <p className="text-center text-gray-400 mt-8">まだ投稿がありません</p>
         ) : (
-          <div className="grid grid-cols-1 gap-3">
+          <div className="flex flex-col gap-3">
             {pinnedPostId && posts.find((p) => p.id === pinnedPostId) && (
               <PinnedPostCard
                 post={posts.find((p) => p.id === pinnedPostId)!}
                 postCount={posts.length}
               />
             )}
-            {posts
-              .filter((p) => p.id !== pinnedPostId)
-              .map((post) => (
-                <PostMiniCard key={post.id} post={post} />
-              ))}
+            <div className="grid grid-cols-2 gap-3">
+              {posts
+                .filter((p) => p.id !== pinnedPostId)
+                .map((post) => (
+                  <PostMiniCard key={post.id} post={post} />
+                ))}
+            </div>
           </div>
         )}
       </div>
