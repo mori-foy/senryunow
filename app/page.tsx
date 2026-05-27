@@ -191,7 +191,7 @@ export default function HomePage() {
             className="flex items-center gap-1.5 text-sm text-gray-500 border border-gray-300 rounded-xl px-3 py-2 active:scale-95 transition-all"
           >
             <span>📍</span>
-            <span>{locationLoading ? "取得中..." : "位置情報を付ける"}</span>
+            <span>{locationLoading ? "取得中..." : "位置情報を取得する"}</span>
           </button>
         ) : (
           <div className="flex items-center gap-2 text-sm text-gray-600 border border-[#3A7D55]/40 bg-[#3A7D55]/5 rounded-xl px-3 py-2">
