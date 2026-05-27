@@ -37,7 +37,17 @@ export interface FirestoreReaction {
 }
 
 function todayString() {
-  return new Date().toISOString().split("T")[0];
+  const now = new Date();
+  // JST (UTC+9) に変換し、15:00 JST を日付の境界にする
+  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  if (jst.getUTCHours() < 15) {
+    // 15:00 より前は前日の期間扱い
+    jst.setUTCDate(jst.getUTCDate() - 1);
+  }
+  const y = jst.getUTCFullYear();
+  const m = String(jst.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(jst.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 export function createPost(
