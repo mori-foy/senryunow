@@ -91,12 +91,12 @@ export default function StampButton({
         </button>
 
         {pickerOpen && (
-          <div className="absolute bottom-14 left-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-2 flex flex-wrap gap-1 z-20 w-[196px]">
+          <div className="absolute bottom-14 left-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-2 flex flex-nowrap gap-1 z-20">
             {STAMP_OPTIONS.map((emoji) => (
               <button
                 key={emoji}
                 onClick={() => handleSelect(emoji)}
-                className={`w-11 h-11 rounded-xl text-2xl flex items-center justify-center transition-all active:scale-90 ${
+                className={`w-9 h-9 rounded-xl text-lg flex items-center justify-center transition-all active:scale-90 ${
                   myStamp?.emoji === emoji
                     ? "bg-[#3A7D55]/10 ring-2 ring-[#3A7D55]"
                     : "hover:bg-gray-100"
