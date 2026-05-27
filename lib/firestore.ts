@@ -9,6 +9,8 @@ import {
   onSnapshot,
   serverTimestamp,
   getCountFromServer,
+  getDocs,
+  writeBatch,
   setDoc,
   Timestamp,
 } from "firebase/firestore";
@@ -123,6 +125,22 @@ export function subscribePinnedPostId(
 
 export async function setPinnedPost(uid: string, postId: string | null) {
   await setDoc(doc(db, "users", uid), { pinnedPostId: postId }, { merge: true });
+}
+
+export async function updateUserDisplayName(uid: string, displayName: string) {
+  const batch = writeBatch(db);
+
+  const postsSnap = await getDocs(
+    query(collection(db, "posts"), where("uid", "==", uid))
+  );
+  postsSnap.docs.forEach((d) => batch.update(d.ref, { displayName }));
+
+  const reactionsSnap = await getDocs(
+    query(collection(db, "reactions"), where("uid", "==", uid))
+  );
+  reactionsSnap.docs.forEach((d) => batch.update(d.ref, { displayName }));
+
+  await batch.commit();
 }
 
 export async function getUserPostCount(uid: string): Promise<number> {

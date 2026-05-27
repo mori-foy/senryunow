@@ -11,6 +11,7 @@ import {
   subscribeReactions,
   setPinnedPost,
   deletePost,
+  updateUserDisplayName,
   type FirestorePost,
   type FirestoreReaction,
 } from "@/lib/firestore";
@@ -183,7 +184,9 @@ export default function ProfilePage() {
   const handleSaveName = async () => {
     if (!user || !nameInput.trim()) return;
     setSavingName(true);
-    await updateProfile(user, { displayName: nameInput.trim() });
+    const newName = nameInput.trim();
+    await updateProfile(user, { displayName: newName });
+    await updateUserDisplayName(user.uid, newName);
     await refreshUser();
     setSavingName(false);
     setEditingName(false);
