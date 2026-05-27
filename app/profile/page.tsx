@@ -124,7 +124,7 @@ function PostMiniCard({
         className="w-full"
         onClick={() => setDetailOpen(true)}
       >
-        <div className="flex flex-row-reverse justify-center gap-2 overflow-hidden" style={{ height: "95px" }}>
+        <div className="flex flex-row-reverse justify-center gap-2">
           {lines.map((line, i) => (
             <div
               key={i}
@@ -134,8 +134,7 @@ function PostMiniCard({
                 textOrientation: "mixed",
                 fontFamily: "var(--font-kaisei)",
                 fontSize: "12px",
-                lineHeight: 1.1,
-                overflow: "hidden",
+                lineHeight: 1.0,
               }}
             >
               {line}
