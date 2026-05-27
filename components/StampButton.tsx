@@ -8,7 +8,7 @@ import {
   type FirestoreReaction,
 } from "@/lib/firestore";
 
-const STAMP_OPTIONS = ["🈴", "💯", "😂", "🥲", "🌸", "❤️", "🔥"];
+const STAMP_OPTIONS = ["🈴️", "💯", "😂", "🥲", "🌸", "❤️", "🔥"];
 
 export default function StampButton({
   postId,
