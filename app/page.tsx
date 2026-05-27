@@ -35,16 +35,12 @@ export default function HomePage() {
         try {
           const { latitude, longitude } = pos.coords;
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=ja`,
-            { headers: { "User-Agent": "senryunow/1.0" } }
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=ja`
           );
           const data = await res.json();
-          const addr = data.address ?? {};
-          // 区レベルを優先: city_district → suburb → city(区で終わる) → city → town → village
-          const ward = addr.city_district ?? addr.suburb;
-          const city = addr.city ?? addr.town ?? addr.village ?? "";
-          const area = ward ?? city;
-          const parts = [addr.state, area].filter(Boolean);
+          const prefecture = data.principalSubdivision ?? "";
+          const city = data.city ?? data.locality ?? "";
+          const parts = [prefecture, city].filter(Boolean);
           setLocation(parts.length > 0 ? parts.join(" ") : "不明");
         } catch {
           setLocation("不明");
@@ -52,10 +48,15 @@ export default function HomePage() {
           setLocationLoading(false);
         }
       },
-      () => {
-        setLocation("不明");
+      (err) => {
+        if (err.code === 1) {
+          setLocation("許可されていません");
+        } else {
+          setLocation("不明");
+        }
         setLocationLoading(false);
-      }
+      },
+      { timeout: 10000, enableHighAccuracy: false }
     );
   };
 
