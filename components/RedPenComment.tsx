@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   subscribeReactions,
   addRedPenComment,
+  removeReaction,
   type FirestoreReaction,
 } from "@/lib/firestore";
 
@@ -44,15 +45,31 @@ export default function RedPenComment({
       {comments.map((comment) => (
         <div
           key={comment.id}
-          className="mb-2 px-3 py-1.5 bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg"
+          className="mb-2 px-3 py-1.5 bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg flex items-start justify-between gap-2"
         >
-          <p
-            className="text-sm text-[#C0392B] font-medium"
-            style={{ fontFamily: "var(--font-kaisei)" }}
-          >
-            ✏️ {comment.comment}
-          </p>
-          <p className="text-xs text-red-400 mt-0.5">— {comment.displayName}</p>
+          <div>
+            <p
+              className="text-sm text-[#C0392B] font-medium"
+              style={{ fontFamily: "var(--font-kaisei)" }}
+            >
+              ✏️ {comment.comment}
+            </p>
+            <p className="text-xs text-red-400 mt-0.5">— {comment.displayName}</p>
+          </div>
+          {comment.uid === currentUid && (
+            <button
+              onClick={() => removeReaction(comment.id)}
+              className="text-red-300 hover:text-red-500 transition-colors flex-shrink-0 mt-0.5"
+              aria-label="削除"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              </svg>
+            </button>
+          )}
         </div>
       ))}
 
