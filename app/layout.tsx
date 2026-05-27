@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Yuji_Boku, Noto_Sans_JP } from "next/font/google";
+import { Yuji_Boku } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import BottomNav from "@/components/BottomNav";
 import "./globals.css";
@@ -9,13 +9,7 @@ const yujiBoku = Yuji_Boku({
   subsets: ["latin"],
   variable: "--font-kaisei",
   display: "swap",
-});
-
-const notoSansJP = Noto_Sans_JP({
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
-  variable: "--font-noto",
-  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -31,7 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${yujiBoku.variable} ${notoSansJP.variable} h-full`}
+      className={`${yujiBoku.variable} h-full`}
     >
       <body className="min-h-full pb-16">
         <AuthProvider>
