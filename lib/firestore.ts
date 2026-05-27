@@ -23,6 +23,7 @@ export interface FirestorePost {
   haiku: string;
   createdAt: Timestamp | null;
   date: string;
+  location?: string | null;
 }
 
 export interface FirestoreReaction {
@@ -54,7 +55,8 @@ export function createPost(
   uid: string,
   displayName: string,
   photoURL: string,
-  lines: [string, string, string]
+  lines: [string, string, string],
+  location?: string | null
 ) {
   return addDoc(collection(db, "posts"), {
     uid,
@@ -63,6 +65,7 @@ export function createPost(
     haiku: lines.join("／"),
     createdAt: serverTimestamp(),
     date: todayString(),
+    location: location ?? null,
   });
 }
 

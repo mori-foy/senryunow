@@ -35,22 +35,27 @@ export default function PostCard({
   return (
     <div className="bg-white/70 rounded-2xl p-5 border border-[#D4C9B8] shadow-sm mb-4">
       {/* Author */}
-      <div className="flex items-center gap-2 mb-4">
-        <button
-          onClick={() => !isOwnPost && router.push(`/profile/${post.uid}`)}
-          className={isOwnPost ? "cursor-default" : "active:scale-95 transition-transform"}
-        >
-          <UserAvatar
-            uid={post.uid}
-            photoURL={post.photoURL}
-            displayName={post.displayName}
-            size={36}
-          />
-        </button>
-        <div>
-          <p className="font-medium text-[#1A1A1A] text-sm">{post.displayName}</p>
-          <p className="text-xs text-gray-400">{formatTime(post.createdAt)}</p>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => !isOwnPost && router.push(`/profile/${post.uid}`)}
+            className={isOwnPost ? "cursor-default" : "active:scale-95 transition-transform"}
+          >
+            <UserAvatar
+              uid={post.uid}
+              photoURL={post.photoURL}
+              displayName={post.displayName}
+              size={36}
+            />
+          </button>
+          <div>
+            <p className="font-medium text-[#1A1A1A] text-sm">{post.displayName}</p>
+            <p className="text-xs text-gray-400">{formatTime(post.createdAt)}</p>
+          </div>
         </div>
+        <p className="text-xs text-gray-400">
+          📍 {post.location ?? "不明"}
+        </p>
       </div>
 
       {/* Senryu - vertical writing */}

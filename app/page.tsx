@@ -21,6 +21,39 @@ export default function HomePage() {
     "",
   ]);
   const [submitting, setSubmitting] = useState(false);
+  const [location, setLocation] = useState<string | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      setLocation("不明");
+      return;
+    }
+    setLocationLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=ja`,
+            { headers: { "User-Agent": "senryunow/1.0" } }
+          );
+          const data = await res.json();
+          const addr = data.address ?? {};
+          const parts = [addr.state, addr.city ?? addr.town ?? addr.village].filter(Boolean);
+          setLocation(parts.length > 0 ? parts.join(" ") : "不明");
+        } catch {
+          setLocation("不明");
+        } finally {
+          setLocationLoading(false);
+        }
+      },
+      () => {
+        setLocation("不明");
+        setLocationLoading(false);
+      }
+    );
+  };
 
   useEffect(() => {
     if (hasPosted) {
@@ -44,7 +77,8 @@ export default function HomePage() {
         user.uid,
         user.displayName ?? "名無し",
         user.photoURL ?? "",
-        pendingLines
+        pendingLines,
+        location
       );
       setPosted();
     } catch {
@@ -147,6 +181,31 @@ export default function HomePage() {
           </div>
         </div>
       )}
+
+      {/* Location */}
+      <div className="flex items-center gap-2 mt-3 mb-1">
+        {location === null ? (
+          <button
+            onClick={handleGetLocation}
+            disabled={locationLoading}
+            className="flex items-center gap-1.5 text-sm text-gray-500 border border-gray-300 rounded-xl px-3 py-2 active:scale-95 transition-all"
+          >
+            <span>📍</span>
+            <span>{locationLoading ? "取得中..." : "位置情報を付ける"}</span>
+          </button>
+        ) : (
+          <div className="flex items-center gap-2 text-sm text-gray-600 border border-[#3A7D55]/40 bg-[#3A7D55]/5 rounded-xl px-3 py-2">
+            <span>📍</span>
+            <span>{location}</span>
+            <button
+              onClick={() => setLocation(null)}
+              className="ml-1 text-gray-400 text-xs"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Submit button */}
       <button
