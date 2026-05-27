@@ -74,9 +74,9 @@ function PostMiniCard({
   };
 
   return (
-    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm">
+    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm flex flex-col overflow-hidden" style={{ height: "155px" }}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-1.5">
+      <div className="flex items-center justify-between mb-1">
         <p className="text-[10px] text-gray-400 leading-none">{formatDate(post.date, post.createdAt)}</p>
         <div className="flex items-center gap-1.5">
           <button
@@ -121,10 +121,10 @@ function PostMiniCard({
       {error && <p className="text-[10px] text-red-500 mb-1">{error}</p>}
       {/* Haiku — tap to open detail */}
       <button
-        className="w-full pt-2"
+        className="w-full flex-1 overflow-hidden"
         onClick={() => setDetailOpen(true)}
       >
-        <div className="flex flex-row-reverse justify-center gap-2">
+        <div className="flex flex-row-reverse justify-center items-start gap-2 h-full">
           {lines.map((line, i) => (
             <div
               key={i}
@@ -133,8 +133,9 @@ function PostMiniCard({
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
                 fontFamily: "var(--font-kaisei)",
-                fontSize: "15px",
+                fontSize: "14px",
                 lineHeight: 1.0,
+                overflow: "hidden",
               }}
             >
               {line}
@@ -144,7 +145,7 @@ function PostMiniCard({
       </button>
       {/* Reactions summary */}
       {(stamps.length > 0 || comments.length > 0) && (
-        <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-[#D4C9B8]/50">
+        <div className="flex flex-wrap gap-1 mt-1 pt-1 border-t border-[#D4C9B8]/50">
           {stamps.map((s) => (
             <span key={s.id} className="text-xs">{s.emoji}</span>
           ))}
@@ -406,7 +407,7 @@ export default function ProfilePage() {
               <PinnedPostCard post={pinnedPost} postCount={posts.length} />
             )}
             {/* Rest of posts — 2 column grid */}
-            <div className="grid grid-cols-2 gap-3 items-start">
+            <div className="grid grid-cols-2 gap-3">
             {unpinnedPosts.map((post) => (
               <PostMiniCard
                 key={post.id}

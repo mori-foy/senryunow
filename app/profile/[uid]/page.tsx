@@ -38,10 +38,10 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
   const comments = reactions.filter((r) => r.type === "redpen");
 
   return (
-    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm">
-      <p className="text-[10px] text-gray-400 mb-1.5">{formatDate(post.date, post.createdAt)}</p>
-      <button className="w-full pt-2" onClick={() => setDetailOpen(true)}>
-        <div className="flex flex-row-reverse justify-center gap-2">
+    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm flex flex-col overflow-hidden" style={{ height: "155px" }}>
+      <p className="text-[10px] text-gray-400 mb-1">{formatDate(post.date, post.createdAt)}</p>
+      <button className="w-full flex-1 overflow-hidden" onClick={() => setDetailOpen(true)}>
+        <div className="flex flex-row-reverse justify-center items-start gap-2 h-full">
           {lines.map((line, i) => (
             <div
               key={i}
@@ -50,8 +50,9 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
                 fontFamily: "var(--font-kaisei)",
-                fontSize: "15px",
+                fontSize: "14px",
                 lineHeight: 1.0,
+                overflow: "hidden",
               }}
             >
               {line}
@@ -60,7 +61,7 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
         </div>
       </button>
       {(stamps.length > 0 || comments.length > 0) && (
-        <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-[#D4C9B8]/50">
+        <div className="flex flex-wrap gap-1 mt-1 pt-1 border-t border-[#D4C9B8]/50">
           {stamps.map((s) => (
             <span key={s.id} className="text-xs">{s.emoji}</span>
           ))}
@@ -241,7 +242,7 @@ export default function PublicProfilePage({
                 postCount={posts.length}
               />
             )}
-            <div className="grid grid-cols-2 gap-3 items-start">
+            <div className="grid grid-cols-2 gap-3">
               {posts
                 .filter((p) => p.id !== pinnedPostId)
                 .map((post) => (
