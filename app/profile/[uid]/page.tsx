@@ -15,9 +15,14 @@ function getStatus(count: number): string {
   return "宗匠";
 }
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, ts?: { seconds: number } | null): string {
   const [year, month, day] = dateStr.split("-");
-  return `${year}年${Number(month)}月${Number(day)}日`;
+  const date = `${year}年${Number(month)}月${Number(day)}日`;
+  if (!ts) return date;
+  const d = new Date(ts.seconds * 1000);
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${date} ${hh}:${mm}`;
 }
 
 function PostMiniCard({ post }: { post: FirestorePost }) {
@@ -34,7 +39,7 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
 
   return (
     <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
-      <p className="text-[10px] text-gray-400 mb-2">{formatDate(post.date)}</p>
+      <p className="text-[10px] text-gray-400 mb-2">{formatDate(post.date, post.createdAt)}</p>
       <button className="w-full" onClick={() => setDetailOpen(true)}>
         <div className="flex flex-row-reverse justify-center gap-3" style={{ height: "110px" }}>
           {lines.map((line, i) => (
@@ -76,7 +81,7 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <p className="text-xs text-gray-400">{formatDate(post.date)}</p>
+              <p className="text-xs text-gray-400">{formatDate(post.date, post.createdAt)}</p>
               <button onClick={() => setDetailOpen(false)} className="text-gray-400 text-lg leading-none">✕</button>
             </div>
             <div className="flex flex-row-reverse justify-center gap-6 mb-6" style={{ height: "140px" }}>

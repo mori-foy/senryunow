@@ -25,9 +25,14 @@ function getStatus(count: number): string {
   return "宗匠";
 }
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, ts?: { seconds: number } | null): string {
   const [year, month, day] = dateStr.split("-");
-  return `${year}年${Number(month)}月${Number(day)}日`;
+  const date = `${year}年${Number(month)}月${Number(day)}日`;
+  if (!ts) return date;
+  const d = new Date(ts.seconds * 1000);
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${date} ${hh}:${mm}`;
 }
 
 function PostMiniCard({
@@ -72,7 +77,7 @@ function PostMiniCard({
     <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <p className="text-[10px] text-gray-400 leading-none">{formatDate(post.date)}</p>
+        <p className="text-[10px] text-gray-400 leading-none">{formatDate(post.date, post.createdAt)}</p>
         <div className="flex items-center gap-1.5">
           <button
             onClick={isPinned ? onUnpin : onPin}
@@ -161,7 +166,7 @@ function PostMiniCard({
           >
             {/* Close */}
             <div className="flex justify-between items-center mb-4">
-              <p className="text-xs text-gray-400">{formatDate(post.date)}</p>
+              <p className="text-xs text-gray-400">{formatDate(post.date, post.createdAt)}</p>
               <button onClick={() => setDetailOpen(false)} className="text-gray-400 text-lg leading-none">✕</button>
             </div>
             {/* Haiku */}
