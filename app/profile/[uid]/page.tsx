@@ -38,8 +38,8 @@ function PostMiniCard({ post }: { post: FirestorePost }) {
   const comments = reactions.filter((r) => r.type === "redpen");
 
   return (
-    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm flex flex-col overflow-hidden" style={{ height: "155px" }}>
-      <p className="text-[10px] text-gray-400 mb-1">{formatDate(post.date, post.createdAt)}</p>
+    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm flex flex-col overflow-hidden" style={{ height: "185px" }}>
+      <p className="text-[10px] text-gray-400 mb-3">{formatDate(post.date, post.createdAt)}</p>
       <button className="w-full flex-1 overflow-hidden" onClick={() => setDetailOpen(true)}>
         <div className="flex flex-row-reverse justify-center items-start gap-2 h-full">
           {lines.map((line, i) => (

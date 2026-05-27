@@ -74,9 +74,9 @@ function PostMiniCard({
   };
 
   return (
-    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm flex flex-col overflow-hidden" style={{ height: "155px" }}>
+    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm flex flex-col overflow-hidden" style={{ height: "185px" }}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center justify-between mb-3">
         <p className="text-[10px] text-gray-400 leading-none">{formatDate(post.date, post.createdAt)}</p>
         <div className="flex items-center gap-1.5">
           <button
