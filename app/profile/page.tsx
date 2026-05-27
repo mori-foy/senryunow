@@ -74,9 +74,9 @@ function PostMiniCard({
   };
 
   return (
-    <div className="bg-white/70 rounded-xl p-3 border border-[#D4C9B8] shadow-sm">
+    <div className="bg-white/70 rounded-xl p-2 border border-[#D4C9B8] shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1.5">
         <p className="text-[10px] text-gray-400 leading-none">{formatDate(post.date, post.createdAt)}</p>
         <div className="flex items-center gap-1.5">
           <button
@@ -124,7 +124,7 @@ function PostMiniCard({
         className="w-full"
         onClick={() => setDetailOpen(true)}
       >
-        <div className="flex flex-row-reverse justify-center gap-2" style={{ height: "72px" }}>
+        <div className="flex flex-row-reverse justify-center gap-2 overflow-hidden" style={{ height: "95px" }}>
           {lines.map((line, i) => (
             <div
               key={i}
@@ -133,9 +133,9 @@ function PostMiniCard({
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
                 fontFamily: "var(--font-kaisei)",
-                fontSize: "11px",
-                lineHeight: 1.15,
-                whiteSpace: "nowrap",
+                fontSize: "12px",
+                lineHeight: 1.1,
+                overflow: "hidden",
               }}
             >
               {line}
