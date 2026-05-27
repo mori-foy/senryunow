@@ -121,7 +121,7 @@ function PostMiniCard({
       {error && <p className="text-[10px] text-red-500 mb-1">{error}</p>}
       {/* Haiku — tap to open detail */}
       <button
-        className="w-full"
+        className="w-full pt-2"
         onClick={() => setDetailOpen(true)}
       >
         <div className="flex flex-row-reverse justify-center gap-2">
