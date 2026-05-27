@@ -1,20 +1,34 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useAppStore } from "@/store/useAppStore";
+import {
+  subscribeReactions,
+  addStamp,
+  removeReaction,
+  type FirestoreReaction,
+} from "@/lib/firestore";
 
 const STAMP_OPTIONS = ["🈴", "💯", "😂", "🥲"];
-const MY_USERNAME = "あなた";
 
-export default function StampButton({ postId }: { postId: string }) {
-  const { posts, addStamp, removeStamp } = useAppStore();
-  const post = posts.find((p) => p.id === postId);
+export default function StampButton({
+  postId,
+  currentUid,
+  isOwnPost,
+}: {
+  postId: string;
+  currentUid: string;
+  isOwnPost: boolean;
+}) {
+  const [stamps, setStamps] = useState<FirestoreReaction[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
 
-  const myStamp = post?.stamps.find((s) => s.username === MY_USERNAME);
+  useEffect(() => {
+    return subscribeReactions(postId, (reactions) => {
+      setStamps(reactions.filter((r) => r.type === "stamp"));
+    });
+  }, [postId]);
 
-  // Close picker on outside click
   useEffect(() => {
     if (!pickerOpen) return;
     const handler = (e: MouseEvent) => {
@@ -26,31 +40,31 @@ export default function StampButton({ postId }: { postId: string }) {
     return () => document.removeEventListener("mousedown", handler);
   }, [pickerOpen]);
 
-  const handleSelect = (emoji: string) => {
-    if (myStamp?.emoji === emoji) {
-      removeStamp(postId);
-    } else {
-      addStamp(postId, emoji);
-    }
-    setPickerOpen(false);
-  };
+  const myStamp = stamps.find((s) => s.uid === currentUid);
 
-  if (!post) return null;
+  const handleSelect = async (emoji: string) => {
+    setPickerOpen(false);
+    if (myStamp?.emoji === emoji) {
+      await removeReaction(myStamp.id);
+    } else {
+      if (myStamp) await removeReaction(myStamp.id);
+      await addStamp(postId, currentUid, "", emoji);
+    }
+  };
 
   return (
     <div className="flex flex-wrap items-end gap-2">
-      {/* Existing stamps */}
-      {post.stamps.map((stamp, i) => (
+      {stamps.map((stamp) => (
         <button
-          key={i}
-          onClick={() => stamp.username === MY_USERNAME && handleSelect(stamp.emoji)}
+          key={stamp.id}
+          onClick={() => stamp.uid === currentUid && handleSelect(stamp.emoji!)}
           className={`flex flex-col items-center gap-0.5 transition-transform active:scale-90 ${
-            stamp.username === MY_USERNAME ? "cursor-pointer" : "cursor-default"
+            stamp.uid === currentUid ? "cursor-pointer" : "cursor-default"
           }`}
         >
           <span
             className={`flex items-center justify-center w-10 h-10 rounded-full text-xl border-2 ${
-              stamp.username === MY_USERNAME
+              stamp.uid === currentUid
                 ? "border-[#3A7D55] bg-[#3A7D55]/10"
                 : "border-gray-200 bg-white"
             }`}
@@ -58,12 +72,12 @@ export default function StampButton({ postId }: { postId: string }) {
             {stamp.emoji}
           </span>
           <span className="text-[10px] text-gray-400 leading-none max-w-[40px] truncate">
-            {stamp.username}
+            {stamp.displayName}
           </span>
         </button>
       ))}
 
-      {/* Add reaction button */}
+      {!isOwnPost && (
       <div className="relative" ref={pickerRef}>
         <button
           onClick={() => setPickerOpen((v) => !v)}
@@ -75,7 +89,6 @@ export default function StampButton({ postId }: { postId: string }) {
           <span className="text-[10px] text-transparent leading-none">_</span>
         </button>
 
-        {/* Emoji picker */}
         {pickerOpen && (
           <div className="absolute bottom-14 left-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-2 flex gap-1 z-20">
             {STAMP_OPTIONS.map((emoji) => (
@@ -94,6 +107,7 @@ export default function StampButton({ postId }: { postId: string }) {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

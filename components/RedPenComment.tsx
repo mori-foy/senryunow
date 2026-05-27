@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useAppStore } from "@/store/useAppStore";
+import { useState, useEffect } from "react";
+import {
+  subscribeReactions,
+  addRedPenComment,
+  type FirestoreReaction,
+} from "@/lib/firestore";
 
 function rotationForId(id: string): number {
-  // Deterministic tilt based on comment ID — avoids SSR mismatch
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
     hash = (hash * 31 + id.charCodeAt(i)) & 0xffffffff;
@@ -12,23 +15,41 @@ function rotationForId(id: string): number {
   return ((hash % 300) - 150) / 100;
 }
 
-export default function RedPenComment({ postId }: { postId: string }) {
-  const { posts, addRedPenComment } = useAppStore();
-  const post = posts.find((p) => p.id === postId);
+export default function RedPenComment({
+  postId,
+  currentUid,
+  currentDisplayName,
+  isOwnPost,
+}: {
+  postId: string;
+  currentUid: string;
+  currentDisplayName: string;
+  isOwnPost: boolean;
+}) {
+  const [comments, setComments] = useState<FirestoreReaction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    return subscribeReactions(postId, (reactions) => {
+      const sorted = reactions
+        .filter((r) => r.type === "redpen")
+        .sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
+      setComments(sorted);
+    });
+  }, [postId]);
+
+  const handleSubmit = async () => {
     const trimmed = input.trim();
     if (!trimmed) return;
-    addRedPenComment(postId, trimmed);
     setInput("");
     setIsOpen(false);
+    await addRedPenComment(postId, currentUid, currentDisplayName, trimmed);
   };
 
   return (
     <div className="mt-2">
-      {post?.redPenComments.map((comment) => (
+      {comments.map((comment) => (
         <div
           key={comment.id}
           className="mb-2 px-3 py-1.5 bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg"
@@ -38,13 +59,13 @@ export default function RedPenComment({ postId }: { postId: string }) {
             className="text-sm text-[#C0392B] font-medium"
             style={{ fontFamily: "var(--font-kaisei)" }}
           >
-            ✏️ {comment.text}
+            ✏️ {comment.comment}
           </p>
-          <p className="text-xs text-red-400 mt-0.5">— {comment.authorName}</p>
+          <p className="text-xs text-red-400 mt-0.5">— {comment.displayName}</p>
         </div>
       ))}
 
-      {isOpen ? (
+      {!isOwnPost && isOpen ? (
         <div className="flex gap-2 mt-2">
           <input
             type="text"
@@ -68,14 +89,14 @@ export default function RedPenComment({ postId }: { postId: string }) {
             ✕
           </button>
         </div>
-      ) : (
+      ) : !isOwnPost ? (
         <button
           onClick={() => setIsOpen(true)}
           className="text-xs text-[#C0392B] underline mt-1"
         >
           ✏️ 赤ペンで添削する
         </button>
-      )}
+      ) : null}
     </div>
   );
 }

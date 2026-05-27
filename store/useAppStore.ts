@@ -2,7 +2,6 @@
 
 import { create } from "zustand";
 import { Part, getRandomParts } from "@/data/parts";
-import { Post, Stamp, RedPenComment, initialMockPosts } from "@/data/mockPosts";
 
 export interface SlotState {
   candidates: Part[];
@@ -18,7 +17,6 @@ interface AppState {
   inputMode: InputMode;
   slots: [SlotState, SlotState, SlotState];
   textInput: string;
-  posts: Post[];
 
   tickTimer: () => void;
   expireTimer: () => void;
@@ -28,10 +26,7 @@ interface AppState {
   togglePartSelection: (slotIndex: 0 | 1 | 2, part: Part) => void;
   shuffleCandidates: (slotIndex: 0 | 1 | 2) => void;
   setTextInput: (text: string) => void;
-  submitPost: (lines: [string, string, string]) => void;
-  addStamp: (postId: string, emoji: string) => void;
-  removeStamp: (postId: string) => void;
-  addRedPenComment: (postId: string, text: string) => void;
+  setPosted: () => void;
 }
 
 const emptySlot = (): SlotState => ({ candidates: [], selected: [] });
@@ -41,10 +36,8 @@ export const useAppStore = create<AppState>((set) => ({
   isExpired: false,
   hasPosted: false,
   inputMode: "parts",
-  // Start with empty candidates — populated client-side via initCandidates()
   slots: [emptySlot(), emptySlot(), emptySlot()],
   textInput: "",
-  posts: initialMockPosts.map((p) => ({ ...p })),
 
   tickTimer: () =>
     set((state) => {
@@ -103,57 +96,5 @@ export const useAppStore = create<AppState>((set) => ({
 
   setTextInput: (text) => set({ textInput: text }),
 
-  submitPost: (lines) => {
-    const newPost: Post = {
-      id: `post-me-${Date.now()}`,
-      userId: "me",
-      username: "あなた",
-      avatar: "🧑",
-      lines,
-      timestamp: new Date(),
-      stamps: [],
-      redPenComments: [],
-    };
-    set((state) => ({
-      hasPosted: true,
-      posts: [newPost, ...state.posts],
-    }));
-  },
-
-  addStamp: (postId, emoji) =>
-    set((state) => ({
-      posts: state.posts.map((p) => {
-        if (p.id !== postId) return p;
-        // Replace existing stamp from "あなた" (one reaction per user)
-        const filtered = p.stamps.filter((s) => s.username !== "あなた");
-        const newStamp: Stamp = { emoji, username: "あなた" };
-        return { ...p, stamps: [...filtered, newStamp] };
-      }),
-    })),
-
-  removeStamp: (postId) =>
-    set((state) => ({
-      posts: state.posts.map((p) =>
-        p.id === postId
-          ? { ...p, stamps: p.stamps.filter((s) => s.username !== "あなた") }
-          : p
-      ),
-    })),
-
-  addRedPenComment: (postId, text) => {
-    const comment: RedPenComment = {
-      id: `rpc-${Date.now()}`,
-      authorId: "me",
-      authorName: "あなた",
-      text,
-      timestamp: new Date(),
-    };
-    set((state) => ({
-      posts: state.posts.map((p) =>
-        p.id === postId
-          ? { ...p, redPenComments: [...p.redPenComments, comment] }
-          : p
-      ),
-    }));
-  },
+  setPosted: () => set({ hasPosted: true }),
 }));

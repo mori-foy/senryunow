@@ -6,10 +6,13 @@ import Image from "next/image";
 import CountdownTimer from "@/components/CountdownTimer";
 import HaikuBuilder from "@/components/HaikuBuilder";
 import { useAppStore } from "@/store/useAppStore";
+import { useAuth } from "@/context/AuthContext";
+import { createPost } from "@/lib/firestore";
 
 export default function HomePage() {
   const router = useRouter();
-  const { isExpired, hasPosted, submitPost } = useAppStore();
+  const { isExpired, hasPosted, setPosted } = useAppStore();
+  const { user, loading, signInWithGoogle } = useAuth();
 
   const [isValid, setIsValid] = useState(false);
   const [pendingLines, setPendingLines] = useState<[string, string, string]>([
@@ -33,12 +36,54 @@ export default function HomePage() {
     []
   );
 
-  const handleSubmit = () => {
-    if (!isValid || isExpired) return;
+  const handleSubmit = async () => {
+    if (!isValid || isExpired || !user) return;
     setSubmitting(true);
-    submitPost(pendingLines);
-    router.push("/feed");
+    try {
+      await createPost(
+        user.uid,
+        user.displayName ?? "名無し",
+        user.photoURL ?? "",
+        pendingLines
+      );
+      setPosted();
+    } catch {
+      setSubmitting(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-400">読み込み中...</p>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 max-w-md mx-auto">
+        <Image
+          src="/logo_senryunow.png"
+          alt="川柳なう。"
+          width={240}
+          height={80}
+          className="mx-auto mb-10"
+          priority
+        />
+        <p className="text-gray-500 mb-8 text-sm text-center">
+          今日の一句を詠むには<br />ログインしてください
+        </p>
+        <button
+          onClick={signInWithGoogle}
+          className="w-full max-w-xs py-4 rounded-2xl text-base font-bold bg-[#3A7D55] text-white shadow-lg active:scale-95 transition-all duration-200"
+          style={{ fontFamily: "var(--font-kaisei)" }}
+        >
+          Googleでログイン
+        </button>
+      </main>
+    );
+  }
 
   if (isExpired && !hasPosted) {
     return (
