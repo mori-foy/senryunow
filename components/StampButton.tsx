@@ -59,7 +59,7 @@ export default function StampButton({
       {stamps.map((stamp) => (
         <button
           key={stamp.id}
-          onClick={() => stamp.uid === currentUid && handleSelect(stamp.emoji!)}
+          onClick={() => { if (stamp.uid === currentUid) handleSelect(stamp.emoji!); }}
           className={`flex flex-col items-center gap-0.5 transition-transform active:scale-90 ${
             stamp.uid === currentUid ? "cursor-pointer" : "cursor-default"
           }`}
