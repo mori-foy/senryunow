@@ -62,7 +62,7 @@ export default function PostCard({
       <div
         className="flex flex-row-reverse justify-center gap-6 mb-4 px-4 rounded-xl overflow-hidden"
         style={{
-          height: "140px",
+          height: "180px",
           backgroundImage: "url('/background_wasi.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
