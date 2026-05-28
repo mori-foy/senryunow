@@ -4,9 +4,19 @@ import { useState, useEffect } from "react";
 import {
   subscribeReactions,
   addRedPenComment,
+  addReply,
   removeReaction,
   type FirestoreReaction,
 } from "@/lib/firestore";
+
+const TrashIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+    <path d="M10 11v6M14 11v6" />
+    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+  </svg>
+);
 
 export default function RedPenComment({
   postId,
@@ -20,15 +30,20 @@ export default function RedPenComment({
   isOwnPost: boolean;
 }) {
   const [comments, setComments] = useState<FirestoreReaction[]>([]);
+  const [replies, setReplies] = useState<FirestoreReaction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyInput, setReplyInput] = useState("");
 
   useEffect(() => {
     return subscribeReactions(postId, (reactions) => {
-      const sorted = reactions
-        .filter((r) => r.type === "redpen")
-        .sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
-      setComments(sorted);
+      const sorted = (type: string) =>
+        reactions
+          .filter((r) => r.type === type)
+          .sort((a, b) => (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
+      setComments(sorted("redpen"));
+      setReplies(sorted("reply"));
     });
   }, [postId]);
 
@@ -40,38 +55,108 @@ export default function RedPenComment({
     await addRedPenComment(postId, currentUid, currentDisplayName, trimmed);
   };
 
+  const handleReply = async (parentId: string) => {
+    const trimmed = replyInput.trim();
+    if (!trimmed) return;
+    setReplyInput("");
+    setReplyingTo(null);
+    await addReply(postId, currentUid, currentDisplayName, trimmed, parentId);
+  };
+
   return (
     <div className="mt-2">
-      {comments.map((comment) => (
-        <div
-          key={comment.id}
-          className="mb-2 px-3 py-1.5 bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg flex items-start justify-between gap-2"
-        >
-          <div>
-            <p
-              className="text-sm text-[#C0392B] font-medium"
-              style={{ fontFamily: "var(--font-kaisei)" }}
-            >
-              ✏️ {comment.comment}
-            </p>
-            <p className="text-xs text-red-400 mt-0.5">— {comment.displayName}</p>
+      {comments.map((comment) => {
+        const commentReplies = replies.filter((r) => r.parentId === comment.id);
+        return (
+          <div key={comment.id} className="mb-2">
+            {/* 赤ペンコメント */}
+            <div className="px-3 py-1.5 bg-red-50 border-l-4 border-[#C0392B] rounded-r-lg flex items-start justify-between gap-2">
+              <div>
+                <p
+                  className="text-sm text-[#C0392B] font-medium"
+                  style={{ fontFamily: "var(--font-kaisei)" }}
+                >
+                  ✏️ {comment.comment}
+                </p>
+                <p className="text-xs text-red-400 mt-0.5">— {comment.displayName}</p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+                {isOwnPost && (
+                  <button
+                    onClick={() => {
+                      setReplyingTo(replyingTo === comment.id ? null : comment.id);
+                      setReplyInput("");
+                    }}
+                    className="text-xs text-[#3A7D55] font-medium"
+                  >
+                    返信
+                  </button>
+                )}
+                {comment.uid === currentUid && (
+                  <button
+                    onClick={() => removeReaction(comment.id)}
+                    className="text-red-300 hover:text-red-500 transition-colors"
+                    aria-label="削除"
+                  >
+                    <TrashIcon />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* 返信入力欄 */}
+            {replyingTo === comment.id && (
+              <div className="flex gap-2 mt-1 ml-4">
+                <input
+                  type="text"
+                  value={replyInput}
+                  onChange={(e) => setReplyInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleReply(comment.id)}
+                  placeholder="返信を入力..."
+                  className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-[#3A7D55]/40 rounded-lg focus:outline-none focus:border-[#3A7D55] bg-white"
+                  autoFocus
+                />
+                <button
+                  onClick={() => handleReply(comment.id)}
+                  className="px-3 py-1.5 bg-[#3A7D55] text-white text-sm rounded-lg"
+                >
+                  送信
+                </button>
+                <button
+                  onClick={() => setReplyingTo(null)}
+                  className="px-2 py-1.5 text-gray-400 text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* 返信一覧 */}
+            {commentReplies.map((reply) => (
+              <div
+                key={reply.id}
+                className="ml-4 mt-1 px-3 py-1.5 bg-[#3A7D55]/5 border-l-4 border-[#3A7D55] rounded-r-lg flex items-start justify-between gap-2"
+              >
+                <div>
+                  <p className="text-sm text-[#3A7D55] font-medium">
+                    ↩ {reply.comment}
+                  </p>
+                  <p className="text-xs text-[#3A7D55]/60 mt-0.5">— {reply.displayName}</p>
+                </div>
+                {reply.uid === currentUid && (
+                  <button
+                    onClick={() => removeReaction(reply.id)}
+                    className="text-[#3A7D55]/40 hover:text-[#3A7D55] transition-colors flex-shrink-0 mt-0.5"
+                    aria-label="削除"
+                  >
+                    <TrashIcon />
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
-          {comment.uid === currentUid && (
-            <button
-              onClick={() => removeReaction(comment.id)}
-              className="text-red-300 hover:text-red-500 transition-colors flex-shrink-0 mt-0.5"
-              aria-label="削除"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                <path d="M10 11v6M14 11v6" />
-                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-              </svg>
-            </button>
-          )}
-        </div>
-      ))}
+        );
+      })}
 
       {!isOwnPost && isOpen ? (
         <div className="flex gap-2 mt-2">

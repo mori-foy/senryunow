@@ -30,10 +30,11 @@ export interface FirestoreReaction {
   id: string;
   postId: string;
   uid: string;
-  type: "stamp" | "redpen";
+  type: "stamp" | "redpen" | "reply";
   emoji?: string;
   displayName?: string;
   comment?: string | null;
+  parentId?: string | null;
   createdAt: Timestamp | null;
 }
 
@@ -182,6 +183,24 @@ export function subscribeUserPosts(
       return bt - at;
     });
     callback(posts);
+  });
+}
+
+export function addReply(
+  postId: string,
+  uid: string,
+  displayName: string,
+  comment: string,
+  parentId: string
+) {
+  return addDoc(collection(db, "reactions"), {
+    postId,
+    uid,
+    type: "reply",
+    comment,
+    displayName,
+    parentId,
+    createdAt: serverTimestamp(),
   });
 }
 
