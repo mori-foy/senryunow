@@ -60,8 +60,13 @@ export default function PostCard({
 
       {/* Senryu - vertical writing */}
       <div
-        className="flex flex-row-reverse justify-center gap-6 mb-4 px-4"
-        style={{ height: "140px" }}
+        className="flex flex-row-reverse justify-center gap-6 mb-4 px-4 rounded-xl overflow-hidden"
+        style={{
+          height: "140px",
+          backgroundImage: "url('/background_wasi.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         {lines.map((line, i) => (
           <div
