@@ -40,7 +40,7 @@ export default function HomePage() {
           const data = await res.json();
           const prefecture = data.principalSubdivision ?? "";
           const city = data.city ?? data.locality ?? "";
-          const parts = [prefecture, city].filter(Boolean);
+          const parts = [...new Set([prefecture, city].filter(Boolean))];
           setLocation(parts.length > 0 ? parts.join(" ") : "不明");
         } catch {
           setLocation("不明");
