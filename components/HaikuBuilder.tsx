@@ -92,8 +92,8 @@ export default function HaikuBuilder({
 
   return (
     <div>
-      {/* Three input boxes in a row */}
-      <div className="flex gap-2 mb-3">
+      {/* Three boxes in a row — 上の句 right, 中の句 center, 下の句 left（右から縦書き） */}
+      <div className="flex flex-row-reverse gap-2 mb-3">
         {([0, 1, 2] as const).map((i) => {
           const state = slotStates[i];
           const text = getSlotText(i);
@@ -108,7 +108,7 @@ export default function HaikuBuilder({
             <div
               key={i}
               onClick={() => setActiveSlot(i)}
-              className={`flex-1 rounded-xl p-2 border transition-all cursor-pointer ${
+              className={`flex-1 rounded-xl px-2 pt-2 pb-1 border transition-all cursor-pointer flex flex-col items-center ${
                 exact
                   ? "border-green-500 bg-green-50"
                   : isActive
@@ -116,51 +116,67 @@ export default function HaikuBuilder({
                   : "border-[#D4C9B8] bg-white/60"
               }`}
             >
-              {/* Label + mora count + clear */}
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-bold text-[#2C4A7C]">
-                  {SLOT_LABELS_SHORT[i]}
-                </span>
-                <div className="flex items-center gap-1">
-                  <span
-                    className={`text-xs font-bold ${
-                      exact ? "text-green-600" : over ? "text-red-500" : "text-gray-400"
-                    }`}
+              {/* Label */}
+              <span className="text-xs font-bold text-[#2C4A7C] mb-1">
+                {SLOT_LABELS_SHORT[i]}
+              </span>
+
+              {/* Vertical text area */}
+              <div className="flex justify-center items-start flex-1" style={{ height: "96px" }}>
+                {isPartsMode ? (
+                  <div
+                    className="text-lg text-[#1A1A1A] leading-none"
+                    style={{
+                      writingMode: "vertical-rl",
+                      textOrientation: "mixed",
+                      fontFamily: "var(--font-kaisei)",
+                    }}
                   >
-                    {mora}/{target}{exact && "✓"}
-                  </span>
-                  {text && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleClear(i); }}
-                      className="text-gray-300 hover:text-red-400 text-xs leading-none ml-0.5"
-                      aria-label="クリア"
-                    >
-                      ✕
-                    </button>
-                  )}
-                </div>
+                    {text}
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    value={state.freeText}
+                    onChange={(e) => {
+                      setActiveSlot(i);
+                      handleFreeTextChange(i, e.target.value);
+                    }}
+                    onFocus={() => setActiveSlot(i)}
+                    onClick={(e) => e.stopPropagation()}
+                    placeholder="入力"
+                    className="bg-transparent focus:outline-none text-[#1A1A1A] placeholder:text-gray-300 cursor-text"
+                    style={{
+                      writingMode: "vertical-rl",
+                      textOrientation: "mixed",
+                      fontFamily: "var(--font-kaisei)",
+                      fontSize: "18px",
+                      height: "96px",
+                      width: "1.4em",
+                    }}
+                  />
+                )}
               </div>
 
-              {/* Input or parts display */}
-              {isPartsMode ? (
-                <div
-                  className="text-sm break-all leading-snug text-[#1A1A1A] min-h-[28px]"
-                  style={{ fontFamily: "var(--font-kaisei)" }}
+              {/* Mora count + clear */}
+              <div className="flex items-center gap-1 mt-1">
+                <span
+                  className={`text-xs font-bold ${
+                    exact ? "text-green-600" : over ? "text-red-500" : "text-gray-400"
+                  }`}
                 >
-                  {text}
-                </div>
-              ) : (
-                <input
-                  type="text"
-                  value={state.freeText}
-                  onChange={(e) => { setActiveSlot(i); handleFreeTextChange(i, e.target.value); }}
-                  onFocus={() => setActiveSlot(i)}
-                  onClick={(e) => e.stopPropagation()}
-                  placeholder="入力"
-                  className="w-full text-sm bg-transparent focus:outline-none placeholder:text-gray-300 min-h-[28px] cursor-text"
-                  style={{ fontFamily: "var(--font-kaisei)" }}
-                />
-              )}
+                  {mora}/{target}{exact && "✓"}
+                </span>
+                {text && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleClear(i); }}
+                    className="text-gray-300 hover:text-red-400 text-xs leading-none"
+                    aria-label="クリア"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
