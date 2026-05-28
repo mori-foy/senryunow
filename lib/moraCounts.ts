@@ -1,20 +1,27 @@
+// 拗音・小書き母音（直前の子音と合わせて1モーラになるため単独ではカウントしない）
 const SMALL_KANA = new Set([
   "ぁ","ぃ","ぅ","ぇ","ぉ","ゃ","ゅ","ょ","ゎ",
   "ァ","ィ","ゥ","ェ","ォ","ャ","ュ","ョ","ヮ",
 ]);
 
+// 子音だけで1モーラを形成する文字（促音・撥音）
+const CONSONANT_MORA = new Set(["っ","ッ","ん","ン"]);
+
 export function countMora(text: string): number {
   let count = 0;
   for (const char of text) {
+    if (CONSONANT_MORA.has(char)) {
+      count++;
+      continue;
+    }
     if (SMALL_KANA.has(char)) continue;
-    // Regular hiragana (ぁ-ん), katakana (ァ-ン), long vowel mark ー
+    // 通常のひらがな・カタカナ・長音符
     if (
       (char >= "ぁ" && char <= "ゖ") ||
       (char >= "ァ" && char <= "ー")
     ) {
       count++;
     } else if (char >= "一" && char <= "鿿") {
-      // CJK unified ideographs — rough average
       count += 2;
     } else if (/\S/.test(char) && char !== "／" && char !== "/" && char !== "　") {
       count++;
