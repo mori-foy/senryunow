@@ -144,8 +144,16 @@ export default function PinnedPostCard({
 
         {/* Inner frame for 一人前以上 */}
         {frame.inner ? (
-          <div className={`${frame.inner} p-3`}>
-            <div className="flex flex-row-reverse justify-center gap-5" style={{ height: "110px" }}>
+          <div className={`${frame.inner} overflow-hidden`}>
+            <div
+              className="flex flex-row-reverse justify-center gap-5 pt-4 px-4"
+              style={{
+                height: "110px",
+                backgroundImage: "url('/background_wasi.png')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
               {lines.map((line, i) => (
                 <div
                   key={i}
@@ -162,7 +170,15 @@ export default function PinnedPostCard({
             </div>
           </div>
         ) : (
-          <div className="flex flex-row-reverse justify-center gap-5" style={{ height: "110px" }}>
+          <div
+            className="flex flex-row-reverse justify-center gap-5 pt-4 px-4 rounded-xl overflow-hidden"
+            style={{
+              height: "110px",
+              backgroundImage: "url('/background_wasi.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
             {lines.map((line, i) => (
               <div
                 key={i}
