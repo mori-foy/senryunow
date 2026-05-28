@@ -39,8 +39,9 @@ export default function HomePage() {
           );
           const data = await res.json();
           const prefecture = data.principalSubdivision ?? "";
-          const city = data.city ?? data.locality ?? "";
-          const parts = [...new Set([prefecture, city].filter(Boolean))];
+          const city = data.city ?? "";
+          const locality = data.locality ?? "";
+          const parts = [...new Set([prefecture, city, locality].filter(Boolean))];
           setLocation(parts.length > 0 ? parts.join(" ") : "不明");
         } catch {
           setLocation("不明");
