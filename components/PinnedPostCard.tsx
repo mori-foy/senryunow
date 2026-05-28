@@ -148,7 +148,7 @@ export default function PinnedPostCard({
             <div
               className="flex flex-row-reverse justify-center gap-5 pt-4 px-4"
               style={{
-                height: "110px",
+                height: "150px",
                 backgroundImage: "url('/background_wasi.png')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
@@ -173,7 +173,7 @@ export default function PinnedPostCard({
           <div
             className="flex flex-row-reverse justify-center gap-5 pt-4 px-4 rounded-xl overflow-hidden"
             style={{
-              height: "110px",
+              height: "150px",
               backgroundImage: "url('/background_wasi.png')",
               backgroundSize: "cover",
               backgroundPosition: "center",
