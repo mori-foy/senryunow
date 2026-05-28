@@ -49,11 +49,7 @@ export default function HomePage() {
         }
       },
       (err) => {
-        if (err.code === 1) {
-          setLocation("許可されていません");
-        } else {
-          setLocation("不明");
-        }
+        setLocation("不明");
         setLocationLoading(false);
       },
       { timeout: 10000, enableHighAccuracy: false }
