@@ -36,7 +36,7 @@ function CornerSosho({ className }: { className: string }) {
     <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path d="M1 14 L1 1 L14 1" stroke="#B45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M4 14 L4 4 L14 4" stroke="#D97706" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="1" cy="1" r="2" fill="#F59E0B" />
+      <circle cx="1" cy="1" r="2" fill="#F59E0B" className="sosho-dot-glow" />
     </svg>
   );
 }

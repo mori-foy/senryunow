@@ -41,3 +41,16 @@ body {
 .bg-rustle {
   animation: bgRustle 0.3s steps(1) infinite;
 }
+
+@keyframes soshoGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(245, 158, 11, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 5px rgba(245, 158, 11, 1)) drop-shadow(0 0 10px rgba(253, 230, 138, 0.8));
+  }
+}
+
+.sosho-dot-glow {
+  animation: soshoGlow 2s ease-in-out infinite;
+}
