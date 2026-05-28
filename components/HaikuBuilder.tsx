@@ -117,10 +117,7 @@ export default function HaikuBuilder({
               }`}
             >
               {/* Label */}
-              <span
-                className="font-bold text-[#2C4A7C] mb-1 leading-none"
-                style={{ writingMode: "vertical-rl", textOrientation: "mixed", fontSize: "10px" }}
-              >
+              <span className="text-xs font-bold text-[#2C4A7C] mb-1">
                 {SLOT_LABELS_SHORT[i]}
               </span>
 
