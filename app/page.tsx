@@ -56,12 +56,6 @@ export default function HomePage() {
     );
   };
 
-  useEffect(() => {
-    if (hasPosted) {
-      router.push("/feed");
-    }
-  }, [hasPosted, router]);
-
   const handleValidChange = useCallback(
     (valid: boolean, lines: [string, string, string]) => {
       setIsValid(valid);
@@ -82,6 +76,7 @@ export default function HomePage() {
         location
       );
       setPosted();
+      router.push("/feed");
     } catch {
       setSubmitting(false);
     }
