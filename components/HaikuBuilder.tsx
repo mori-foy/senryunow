@@ -125,7 +125,7 @@ export default function HaikuBuilder({
               </span>
 
               {/* Vertical text area */}
-              <div className="flex justify-center items-start flex-1" style={{ height: "96px" }}>
+              <div className="flex justify-center items-start flex-1" style={{ height: "130px" }}>
                 {isPartsMode ? (
                   <div
                     className="text-lg text-[#1A1A1A] leading-none"
@@ -154,7 +154,7 @@ export default function HaikuBuilder({
                       textOrientation: "mixed",
                       fontFamily: "var(--font-kaisei)",
                       fontSize: "18px",
-                      height: "96px",
+                      height: "130px",
                       width: "1.4em",
                     }}
                   />
