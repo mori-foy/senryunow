@@ -6,7 +6,7 @@ import { countMora } from "@/lib/moraCounts";
 
 const SLOT_TARGETS: [number, number, number] = [5, 7, 5];
 const SLOT_LABELS = ["上の句", "中の句", "下の句"];
-const SLOT_LABELS_SHORT = ["上", "中", "下"];
+const SLOT_LABELS_SHORT = ["上の句", "中の句", "下の句"];
 
 interface SlotLocalState {
   partText: string;
@@ -117,7 +117,10 @@ export default function HaikuBuilder({
               }`}
             >
               {/* Label */}
-              <span className="text-xs font-bold text-[#2C4A7C] mb-1">
+              <span
+                className="font-bold text-[#2C4A7C] mb-1 leading-none"
+                style={{ writingMode: "vertical-rl", textOrientation: "mixed", fontSize: "10px" }}
+              >
                 {SLOT_LABELS_SHORT[i]}
               </span>
 
