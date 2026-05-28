@@ -185,22 +185,10 @@ export default function HaikuBuilder({
       {/* Candidate panel */}
       <div className="bg-white/60 rounded-2xl p-4 border border-[#D4C9B8]">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-bold text-[#2C4A7C]">
-            {SLOT_LABELS[activeSlot]}の候補（{activeTarget}音）
-          </span>
-          <span
-            className={`text-sm font-bold ${
-              isExact ? "text-green-600" : isOver ? "text-red-500" : "text-gray-500"
-            }`}
-          >
-            {activeMora}/{activeTarget}音{isExact && " ✓"}{isOver && " ！"}
-          </span>
-        </div>
-
-        <div className="flex justify-end mb-2">
+          <span className="text-sm font-bold text-[#2C4A7C]">候補</span>
           <button
             onClick={() => shuffleCandidates(activeSlot)}
-            className="text-xs text-[#2C4A7C] underline"
+            className="text-sm text-[#2C4A7C] underline"
           >
             別の候補 ⟳
           </button>
