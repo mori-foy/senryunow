@@ -65,29 +65,26 @@ export default function HaikuBuilder({
     });
   };
 
-  const handleFreeTextChange = (value: string) => {
+  const handleFreeTextChange = (i: number, value: string) => {
     setSlotStates((prev) => {
       const next = [...prev];
-      const s = { ...next[activeSlot] };
+      const s = { ...next[i] };
       s.freeText = value;
       s.partText = "";
       s.partMora = 0;
-      next[activeSlot] = s;
+      next[i] = s;
       return next;
     });
   };
 
-  const handleClear = () => {
+  const handleClear = (i: number) => {
     setSlotStates((prev) => {
       const next = [...prev];
-      next[activeSlot] = { partText: "", partMora: 0, freeText: "" };
+      next[i] = { partText: "", partMora: 0, freeText: "" };
       return next;
     });
   };
 
-  const active = slotStates[activeSlot];
-  const isPartsMode = active.partText !== "";
-  const activeText = isPartsMode ? active.partText : active.freeText;
   const activeMora = getSlotMora(activeSlot);
   const activeTarget = SLOT_TARGETS[activeSlot];
   const isOver = activeMora > activeTarget;
@@ -95,20 +92,23 @@ export default function HaikuBuilder({
 
   return (
     <div>
-      {/* Three boxes in a row */}
+      {/* Three input boxes in a row */}
       <div className="flex gap-2 mb-3">
         {([0, 1, 2] as const).map((i) => {
+          const state = slotStates[i];
           const text = getSlotText(i);
           const mora = getSlotMora(i);
           const target = SLOT_TARGETS[i];
           const exact = mora === target;
           const over = mora > target;
           const isActive = activeSlot === i;
+          const isPartsMode = state.partText !== "";
+
           return (
-            <button
+            <div
               key={i}
               onClick={() => setActiveSlot(i)}
-              className={`flex-1 rounded-xl p-2.5 border text-left transition-all ${
+              className={`flex-1 rounded-xl p-2 border transition-all cursor-pointer ${
                 exact
                   ? "border-green-500 bg-green-50"
                   : isActive
@@ -116,39 +116,61 @@ export default function HaikuBuilder({
                   : "border-[#D4C9B8] bg-white/60"
               }`}
             >
-              <div className="flex items-center justify-between mb-1">
+              {/* Label + mora count + clear */}
+              <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-bold text-[#2C4A7C]">
                   {SLOT_LABELS_SHORT[i]}
                 </span>
-                <span
-                  className={`text-xs font-bold ${
-                    exact ? "text-green-600" : over ? "text-red-500" : "text-gray-400"
-                  }`}
+                <div className="flex items-center gap-1">
+                  <span
+                    className={`text-xs font-bold ${
+                      exact ? "text-green-600" : over ? "text-red-500" : "text-gray-400"
+                    }`}
+                  >
+                    {mora}/{target}{exact && "✓"}
+                  </span>
+                  {text && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleClear(i); }}
+                      className="text-gray-300 hover:text-red-400 text-xs leading-none ml-0.5"
+                      aria-label="クリア"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Input or parts display */}
+              {isPartsMode ? (
+                <div
+                  className="text-sm break-all leading-snug text-[#1A1A1A] min-h-[28px]"
+                  style={{ fontFamily: "var(--font-kaisei)" }}
                 >
-                  {mora}/{target}{exact && "✓"}
-                </span>
-              </div>
-              <div
-                className="text-sm leading-snug break-all min-h-[18px]"
-                style={{ fontFamily: "var(--font-kaisei)" }}
-              >
-                {text ? (
-                  text
-                ) : (
-                  <span className="text-gray-300 text-xs">タップして入力</span>
-                )}
-              </div>
-            </button>
+                  {text}
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  value={state.freeText}
+                  onChange={(e) => { setActiveSlot(i); handleFreeTextChange(i, e.target.value); }}
+                  onFocus={() => setActiveSlot(i)}
+                  onClick={(e) => e.stopPropagation()}
+                  placeholder="入力"
+                  className="w-full text-sm bg-transparent focus:outline-none placeholder:text-gray-300 min-h-[28px] cursor-text"
+                  style={{ fontFamily: "var(--font-kaisei)" }}
+                />
+              )}
+            </div>
           );
         })}
       </div>
 
-      {/* Unified candidate panel */}
+      {/* Candidate panel */}
       <div className="bg-white/60 rounded-2xl p-4 border border-[#D4C9B8]">
-        {/* Panel header */}
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-bold text-[#2C4A7C]">
-            {SLOT_LABELS[activeSlot]}（{activeTarget}音）
+            {SLOT_LABELS[activeSlot]}の候補（{activeTarget}音）
           </span>
           <span
             className={`text-sm font-bold ${
@@ -159,36 +181,6 @@ export default function HaikuBuilder({
           </span>
         </div>
 
-        {/* Input field */}
-        <div className="relative mb-3">
-          {isPartsMode ? (
-            <div
-              className="w-full px-3 py-2 min-h-[44px] text-lg rounded-xl border border-[#2C4A7C]/40 bg-[#EDE8DC] text-[#1A1A1A] pr-10"
-              style={{ fontFamily: "var(--font-kaisei)" }}
-            >
-              {activeText}
-            </div>
-          ) : (
-            <input
-              type="text"
-              value={active.freeText}
-              onChange={(e) => handleFreeTextChange(e.target.value)}
-              placeholder="直接入力、または下の候補から選択"
-              className="w-full px-3 py-2 text-base rounded-xl border border-[#2C4A7C]/40 bg-white focus:outline-none focus:border-[#2C4A7C] pr-10 placeholder:text-sm"
-              style={{ fontFamily: "var(--font-kaisei)" }}
-            />
-          )}
-          <button
-            onClick={handleClear}
-            disabled={activeText === ""}
-            className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-red-400 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            aria-label="クリア"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Shuffle button */}
         <div className="flex justify-end mb-2">
           <button
             onClick={() => shuffleCandidates(activeSlot)}
@@ -198,7 +190,6 @@ export default function HaikuBuilder({
           </button>
         </div>
 
-        {/* Candidate buttons */}
         <div className="flex flex-wrap gap-1.5">
           {slots[activeSlot].candidates.map((part) => (
             <button
