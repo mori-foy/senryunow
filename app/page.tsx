@@ -9,6 +9,15 @@ import { useAppStore } from "@/store/useAppStore";
 import { useAuth } from "@/context/AuthContext";
 import { createPost } from "@/lib/firestore";
 
+function detectInAppBrowser(): boolean {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent;
+  if (/Line\/|Instagram|FBAN|FBAV|Twitter|Snapchat/i.test(ua)) return true;
+  if (/iPhone|iPad|iPod/.test(ua) && !/Safari/.test(ua) && !/CriOS/.test(ua) && !/FxiOS/.test(ua)) return true;
+  if (/Android/.test(ua) && /wv/.test(ua)) return true;
+  return false;
+}
+
 export default function HomePage() {
   const router = useRouter();
   const { isExpired, hasPosted, setPosted } = useAppStore();
@@ -23,6 +32,12 @@ export default function HomePage() {
   const [submitting, setSubmitting] = useState(false);
   const [location, setLocation] = useState<string | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [inAppBrowser, setInAppBrowser] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setInAppBrowser(detectInAppBrowser());
+  }, []);
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -92,6 +107,12 @@ export default function HomePage() {
   }
 
   if (!user) {
+    const handleCopyUrl = async () => {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    };
+
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 max-w-md mx-auto">
         <Image
@@ -102,16 +123,41 @@ export default function HomePage() {
           className="mx-auto mb-10"
           priority
         />
-        <p className="text-gray-500 mb-8 text-sm text-center">
-          今日の一句を詠むには<br />ログインしてください
-        </p>
-        <button
-          onClick={signInWithGoogle}
-          className="w-full max-w-xs py-4 rounded-2xl text-base font-bold bg-[#3A7D55] text-white shadow-lg active:scale-95 transition-all duration-200"
-          style={{ fontFamily: "var(--font-kaisei)" }}
-        >
-          Googleでログイン
-        </button>
+        {inAppBrowser ? (
+          <>
+            <div className="w-full max-w-xs bg-amber-50 border border-amber-300 rounded-2xl p-5 mb-6 text-center">
+              <p className="text-amber-800 text-sm font-bold mb-2">
+                アプリ内ブラウザでは<br />Googleログインができません
+              </p>
+              <p className="text-amber-700 text-xs">
+                SafariまたはChromeで開いてください
+              </p>
+            </div>
+            <button
+              onClick={handleCopyUrl}
+              className="w-full max-w-xs py-4 rounded-2xl text-base font-bold bg-[#3A7D55] text-white shadow-lg active:scale-95 transition-all duration-200"
+              style={{ fontFamily: "var(--font-kaisei)" }}
+            >
+              {copied ? "コピーしました！" : "URLをコピーする"}
+            </button>
+            <p className="text-xs text-gray-400 mt-4 text-center">
+              コピーしたURLをSafariのアドレスバーに貼り付けて開いてください
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-gray-500 mb-8 text-sm text-center">
+              今日の一句を詠むには<br />ログインしてください
+            </p>
+            <button
+              onClick={signInWithGoogle}
+              className="w-full max-w-xs py-4 rounded-2xl text-base font-bold bg-[#3A7D55] text-white shadow-lg active:scale-95 transition-all duration-200"
+              style={{ fontFamily: "var(--font-kaisei)" }}
+            >
+              Googleでログイン
+            </button>
+          </>
+        )}
       </main>
     );
   }
