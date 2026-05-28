@@ -35,6 +35,7 @@ export interface FirestoreReaction {
   displayName?: string;
   comment?: string | null;
   parentId?: string | null;
+  threadId?: string | null;
   createdAt: Timestamp | null;
 }
 
@@ -191,7 +192,8 @@ export function addReply(
   uid: string,
   displayName: string,
   comment: string,
-  parentId: string
+  parentId: string,
+  threadId: string
 ) {
   return addDoc(collection(db, "reactions"), {
     postId,
@@ -200,6 +202,7 @@ export function addReply(
     comment,
     displayName,
     parentId,
+    threadId,
     createdAt: serverTimestamp(),
   });
 }

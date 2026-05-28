@@ -33,7 +33,7 @@ export default function RedPenComment({
   const [replies, setReplies] = useState<FirestoreReaction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<{ parentId: string; threadId: string; targetName: string } | null>(null);
   const [replyInput, setReplyInput] = useState("");
 
   useEffect(() => {
@@ -55,18 +55,21 @@ export default function RedPenComment({
     await addRedPenComment(postId, currentUid, currentDisplayName, trimmed);
   };
 
-  const handleReply = async (parentId: string) => {
+  const handleReply = async () => {
+    if (!replyingTo) return;
     const trimmed = replyInput.trim();
     if (!trimmed) return;
     setReplyInput("");
     setReplyingTo(null);
-    await addReply(postId, currentUid, currentDisplayName, trimmed, parentId);
+    await addReply(postId, currentUid, currentDisplayName, trimmed, replyingTo.parentId, replyingTo.threadId);
   };
 
   return (
     <div className="mt-2">
       {comments.map((comment) => {
-        const commentReplies = replies.filter((r) => r.parentId === comment.id);
+        const threadReplies = replies.filter(
+          (r) => (r.threadId ?? r.parentId) === comment.id
+        );
         return (
           <div key={comment.id} className="mb-2">
             {/* 赤ペンコメント */}
@@ -84,7 +87,7 @@ export default function RedPenComment({
                 {isOwnPost && (
                   <button
                     onClick={() => {
-                      setReplyingTo(replyingTo === comment.id ? null : comment.id);
+                      setReplyingTo({ parentId: comment.id, threadId: comment.id, targetName: comment.displayName ?? "" });
                       setReplyInput("");
                     }}
                     className="text-xs text-[#3A7D55] font-medium"
@@ -104,20 +107,54 @@ export default function RedPenComment({
               </div>
             </div>
 
+            {/* スレッド返信一覧 */}
+            {threadReplies.map((reply) => (
+              <div key={reply.id}>
+                <div className="ml-4 mt-1 px-3 py-1.5 bg-[#3A7D55]/5 border-l-4 border-[#3A7D55] rounded-r-lg flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-sm text-[#3A7D55] font-medium">
+                      ↩ {reply.comment}
+                    </p>
+                    <p className="text-xs text-[#3A7D55]/60 mt-0.5">— {reply.displayName}</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+                    <button
+                      onClick={() => {
+                        setReplyingTo({ parentId: reply.id, threadId: comment.id, targetName: reply.displayName ?? "" });
+                        setReplyInput("");
+                      }}
+                      className="text-xs text-[#3A7D55] font-medium"
+                    >
+                      返信
+                    </button>
+                    {reply.uid === currentUid && (
+                      <button
+                        onClick={() => removeReaction(reply.id)}
+                        className="text-[#3A7D55]/40 hover:text-[#3A7D55] transition-colors flex-shrink-0"
+                        aria-label="削除"
+                      >
+                        <TrashIcon />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+
             {/* 返信入力欄 */}
-            {replyingTo === comment.id && (
+            {replyingTo && (replyingTo.threadId === comment.id || replyingTo.parentId === comment.id) && (
               <div className="flex gap-2 mt-1 ml-4">
                 <input
                   type="text"
                   value={replyInput}
                   onChange={(e) => setReplyInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleReply(comment.id)}
-                  placeholder="返信を入力..."
+                  onKeyDown={(e) => e.key === "Enter" && handleReply()}
+                  placeholder={`${replyingTo.targetName}さんへ返信...`}
                   className="flex-1 min-w-0 px-3 py-1.5 text-sm border border-[#3A7D55]/40 rounded-lg focus:outline-none focus:border-[#3A7D55] bg-white"
                   autoFocus
                 />
                 <button
-                  onClick={() => handleReply(comment.id)}
+                  onClick={handleReply}
                   className="px-3 py-1.5 bg-[#3A7D55] text-white text-sm rounded-lg"
                 >
                   送信
@@ -130,30 +167,6 @@ export default function RedPenComment({
                 </button>
               </div>
             )}
-
-            {/* 返信一覧 */}
-            {commentReplies.map((reply) => (
-              <div
-                key={reply.id}
-                className="ml-4 mt-1 px-3 py-1.5 bg-[#3A7D55]/5 border-l-4 border-[#3A7D55] rounded-r-lg flex items-start justify-between gap-2"
-              >
-                <div>
-                  <p className="text-sm text-[#3A7D55] font-medium">
-                    ↩ {reply.comment}
-                  </p>
-                  <p className="text-xs text-[#3A7D55]/60 mt-0.5">— {reply.displayName}</p>
-                </div>
-                {reply.uid === currentUid && (
-                  <button
-                    onClick={() => removeReaction(reply.id)}
-                    className="text-[#3A7D55]/40 hover:text-[#3A7D55] transition-colors flex-shrink-0 mt-0.5"
-                    aria-label="削除"
-                  >
-                    <TrashIcon />
-                  </button>
-                )}
-              </div>
-            ))}
           </div>
         );
       })}
