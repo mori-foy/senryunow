@@ -25,6 +25,17 @@ function getStatus(count: number): string {
   return "宗匠";
 }
 
+function getStatusBadgeClass(status: string): string {
+  switch (status) {
+    case "みならい": return "text-gray-500 bg-gray-100";
+    case "一般人":   return "text-blue-600 bg-blue-100";
+    case "一人前":   return "text-[#3A7D55] bg-green-100";
+    case "玄人":    return "text-purple-700 bg-purple-100";
+    case "宗匠":    return "text-yellow-700 bg-yellow-100";
+    default:        return "text-gray-500 bg-gray-100";
+  }
+}
+
 function formatDate(dateStr: string, ts?: { seconds: number } | null): string {
   const [year, month, day] = dateStr.split("-");
   const date = `${year}年${Number(month)}月${Number(day)}日`;
@@ -374,7 +385,7 @@ export default function ProfilePage() {
           </div>
         )}
         {postsLoaded && (
-          <span className="text-xs font-bold text-[#3A7D55] bg-[#3A7D55]/10 px-3 py-1 rounded-full mb-1">
+          <span className={`text-xs font-bold px-3 py-1 rounded-full mb-1 ${getStatusBadgeClass(getStatus(posts.length))}`}>
             {getStatus(posts.length)}
           </span>
         )}
