@@ -3,10 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { countMora } from "@/lib/moraCounts";
+import { Part, getRandomParts } from "@/data/parts";
 
-const SLOT_TARGETS: [number, number, number] = [5, 7, 5];
-const SLOT_LABELS = ["上の句", "中の句", "下の句"];
-const SLOT_LABELS_SHORT = ["上の句", "中の句", "下の句"];
+type PoemMode = "senryu" | "tanka";
+
+const MODE_CONFIG = {
+  senryu: {
+    targets: [5, 7, 5],
+    labels: ["上の句", "中の句", "下の句"],
+  },
+  tanka: {
+    targets: [5, 7, 5, 7, 7],
+    labels: ["上の句", "中の句", "下の句", "第四句", "結句"],
+  },
+};
 
 interface SlotLocalState {
   partText: string;
@@ -14,18 +24,21 @@ interface SlotLocalState {
   freeText: string;
 }
 
+const emptySlot = (): SlotLocalState => ({ partText: "", partMora: 0, freeText: "" });
+
 export default function HaikuBuilder({
   onValidChange,
 }: {
-  onValidChange: (valid: boolean, lines: [string, string, string]) => void;
+  onValidChange: (valid: boolean, lines: string[], mode: PoemMode, jiari: boolean) => void;
 }) {
   const { slots, shuffleCandidates, initCandidates } = useAppStore();
-  const [activeSlot, setActiveSlot] = useState<0 | 1 | 2>(0);
+  const [mode, setMode] = useState<PoemMode>("senryu");
+  const [jiari, setJiari] = useState(false);
+  const [activeSlot, setActiveSlot] = useState(0);
   const [slotStates, setSlotStates] = useState<SlotLocalState[]>([
-    { partText: "", partMora: 0, freeText: "" },
-    { partText: "", partMora: 0, freeText: "" },
-    { partText: "", partMora: 0, freeText: "" },
+    emptySlot(), emptySlot(), emptySlot(),
   ]);
+  const [tankaCandidates, setTankaCandidates] = useState<[Part[], Part[]]>([[], []]);
 
   const initialized = useRef(false);
   useEffect(() => {
@@ -35,23 +48,61 @@ export default function HaikuBuilder({
     }
   }, [initCandidates]);
 
+  const config = MODE_CONFIG[mode];
+  const targets = config.targets;
+
   const getSlotText = (i: number) => {
     const s = slotStates[i];
-    return s.partText || s.freeText;
+    return s ? (s.partText || s.freeText) : "";
   };
 
   const getSlotMora = (i: number) => {
     const s = slotStates[i];
+    if (!s) return 0;
     return s.partText ? s.partMora : countMora(s.freeText);
   };
 
-  const lines = [0, 1, 2].map(getSlotText) as [string, string, string];
-  const isValid = [0, 1, 2].every((i) => getSlotMora(i) === SLOT_TARGETS[i]);
+  const isSlotValid = (mora: number, target: number) =>
+    jiari ? Math.abs(mora - target) <= 1 : mora === target;
+
+  const lines = targets.map((_, i) => getSlotText(i));
+  const isValid = targets.every((target, i) => isSlotValid(getSlotMora(i), target));
+  const linesStr = lines.join("／");
 
   useEffect(() => {
-    onValidChange(isValid, lines);
+    onValidChange(isValid, lines, mode, jiari);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValid, lines[0], lines[1], lines[2]]);
+  }, [isValid, linesStr, mode, jiari]);
+
+  const handleModeChange = (newMode: PoemMode) => {
+    if (mode === newMode) return;
+    const hasContent = slotStates.some((s) => s.partText || s.freeText);
+    if (hasContent && !window.confirm("入力内容をリセットしてモードを切り替えますか？")) return;
+    const count = newMode === "senryu" ? 3 : 5;
+    setSlotStates(Array.from({ length: count }, emptySlot));
+    if (newMode === "tanka") {
+      setTankaCandidates([getRandomParts(10), getRandomParts(10)]);
+    }
+    setActiveSlot(0);
+    setMode(newMode);
+  };
+
+  const getCandidates = (slotIdx: number): Part[] => {
+    if (slotIdx < 3) return slots[slotIdx as 0 | 1 | 2].candidates;
+    return tankaCandidates[slotIdx - 3];
+  };
+
+  const handleShuffle = (slotIdx: number) => {
+    if (slotIdx < 3) {
+      shuffleCandidates(slotIdx as 0 | 1 | 2);
+    } else {
+      setTankaCandidates((prev) => {
+        const next = [...prev] as [Part[], Part[]];
+        next[slotIdx - 3] = getRandomParts(10);
+        return next;
+      });
+    }
+  };
 
   const handlePartTap = (text: string, mora: number) => {
     setSlotStates((prev) => {
@@ -80,48 +131,74 @@ export default function HaikuBuilder({
   const handleClear = (i: number) => {
     setSlotStates((prev) => {
       const next = [...prev];
-      next[i] = { partText: "", partMora: 0, freeText: "" };
+      next[i] = emptySlot();
       return next;
     });
   };
 
-  const activeMora = getSlotMora(activeSlot);
-  const activeTarget = SLOT_TARGETS[activeSlot];
-  const isOver = activeMora > activeTarget;
-  const isExact = activeMora === activeTarget;
+  const isTanka = mode === "tanka";
 
   return (
     <div>
-      {/* Three boxes in a row — 上の句 right, 中の句 center, 下の句 left（右から縦書き） */}
-      <div className="flex flex-row-reverse gap-2 mb-3">
-        {([0, 1, 2] as const).map((i) => {
+      {/* Mode toggle */}
+      <div className="flex gap-2 mb-3">
+        <button
+          onClick={() => handleModeChange("tanka")}
+          className={`flex-1 py-2 text-sm font-bold rounded-xl border-2 transition-all ${
+            isTanka
+              ? "bg-[#E0852A] text-white border-[#E0852A]"
+              : "bg-white/60 text-[#E0852A] border-[#E0852A]"
+          }`}
+          style={{ fontFamily: "var(--font-kaisei)" }}
+        >
+          短歌モード
+        </button>
+        <button
+          onClick={() => handleModeChange("senryu")}
+          className={`flex-1 py-2 text-sm font-bold rounded-xl border-2 transition-all ${
+            !isTanka
+              ? "bg-[#2C4A7C] text-white border-[#2C4A7C]"
+              : "bg-white/60 text-[#2C4A7C] border-[#2C4A7C]"
+          }`}
+          style={{ fontFamily: "var(--font-kaisei)" }}
+        >
+          川柳モード
+        </button>
+      </div>
+
+      {/* Slot boxes */}
+      <div className={`flex flex-row-reverse mb-3 ${isTanka ? "gap-1" : "gap-2"}`}>
+        {targets.map((target, i) => {
           const state = slotStates[i];
           const text = getSlotText(i);
           const mora = getSlotMora(i);
-          const target = SLOT_TARGETS[i];
-          const exact = mora === target;
-          const over = mora > target;
+          const valid = isSlotValid(mora, target);
+          const over = jiari ? mora > target + 1 : mora > target;
           const isActive = activeSlot === i;
-          const isPartsMode = state.partText !== "";
+          const isPartsMode = state?.partText !== "";
 
           return (
             <div
               key={i}
               onClick={() => setActiveSlot(i)}
-              className={`flex-1 rounded-xl px-2 pt-2 pb-1 border transition-all cursor-pointer flex flex-col items-center ${
-                exact
+              className={`flex-1 rounded-xl pt-2 pb-1 border transition-all cursor-pointer flex flex-col items-center ${
+                isTanka ? "px-1" : "px-2"
+              } ${
+                valid
                   ? "border-green-500 bg-green-50"
                   : isActive
-                  ? "border-[#2C4A7C] bg-[#2C4A7C]/10"
+                  ? isTanka
+                    ? "border-[#E0852A] bg-[#E0852A]/10"
+                    : "border-[#2C4A7C] bg-[#2C4A7C]/10"
                   : "border-[#D4C9B8] bg-white/60"
               }`}
             >
-              {/* Label */}
-              <span className="text-xs font-bold text-[#2C4A7C] mb-1">
-                {SLOT_LABELS_SHORT[i]}
+              <span
+                className={`font-bold mb-1 ${isTanka ? "text-[9px] text-[#E0852A]" : "text-xs text-[#2C4A7C]"}`}
+              >
+                {config.labels[i]}
               </span>
 
-              {/* Vertical text area */}
               <div className="flex justify-center items-start flex-1" style={{ height: "130px" }}>
                 {isPartsMode ? (
                   <div
@@ -137,7 +214,7 @@ export default function HaikuBuilder({
                 ) : (
                   <input
                     type="text"
-                    value={state.freeText}
+                    value={state?.freeText ?? ""}
                     onChange={(e) => {
                       setActiveSlot(i);
                       handleFreeTextChange(i, e.target.value);
@@ -158,19 +235,21 @@ export default function HaikuBuilder({
                 )}
               </div>
 
-              {/* Mora count + clear */}
-              <div className="flex items-center gap-1 mt-1">
+              <div className="flex items-center gap-0.5 mt-1">
                 <span
-                  className={`text-xs font-bold ${
-                    exact ? "text-green-600" : over ? "text-red-500" : "text-gray-400"
+                  className={`font-bold ${isTanka ? "text-[9px]" : "text-xs"} ${
+                    valid ? "text-green-600" : over ? "text-red-500" : "text-gray-400"
                   }`}
                 >
-                  {mora}/{target}{exact && "✓"}
+                  {mora}/{target}{valid && "✓"}
                 </span>
                 {text && (
                   <button
-                    onClick={(e) => { e.stopPropagation(); handleClear(i); }}
-                    className="text-gray-300 hover:text-red-400 text-xs leading-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClear(i);
+                    }}
+                    className="text-gray-300 hover:text-red-400 text-xs leading-none ml-0.5"
                     aria-label="クリア"
                   >
                     ✕
@@ -182,24 +261,45 @@ export default function HaikuBuilder({
         })}
       </div>
 
+      {/* Jiari toggle */}
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => setJiari(!jiari)}
+          className={`text-xs px-2 py-1 rounded-lg border transition-all ${
+            jiari
+              ? "bg-amber-50 border-amber-400 text-amber-700 font-bold"
+              : "bg-white/60 border-[#D4C9B8] text-gray-400"
+          }`}
+        >
+          {jiari ? "字余り許可 ON" : "字余り許可 OFF"}
+        </button>
+        {jiari && (
+          <span className="text-xs text-amber-600">各句±1音まで許容</span>
+        )}
+      </div>
+
       {/* Candidate panel */}
       <div className="bg-white/60 rounded-2xl p-4 border border-[#D4C9B8]">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-bold text-[#2C4A7C]">候補</span>
+          <span className={`text-sm font-bold ${isTanka ? "text-[#E0852A]" : "text-[#2C4A7C]"}`}>候補</span>
           <button
-            onClick={() => shuffleCandidates(activeSlot)}
-            className="text-sm text-[#2C4A7C] underline"
+            onClick={() => handleShuffle(activeSlot)}
+            className={`text-sm underline ${isTanka ? "text-[#E0852A]" : "text-[#2C4A7C]"}`}
           >
             別の候補 ⟳
           </button>
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          {slots[activeSlot].candidates.map((part) => (
+          {getCandidates(activeSlot).map((part) => (
             <button
               key={part.id}
               onClick={() => handlePartTap(part.text, part.mora)}
-              className="px-2.5 py-1 text-sm rounded-lg border transition-all active:scale-95 bg-white text-[#1A1A1A] border-[#2C4A7C]/30 hover:border-[#2C4A7C] hover:bg-[#2C4A7C]/5"
+              className={`px-2.5 py-1 text-sm rounded-lg border transition-all active:scale-95 bg-white text-[#1A1A1A] ${
+                isTanka
+                  ? "border-[#E0852A]/30 hover:border-[#E0852A] hover:bg-[#E0852A]/5"
+                  : "border-[#2C4A7C]/30 hover:border-[#2C4A7C] hover:bg-[#2C4A7C]/5"
+              }`}
             >
               <span style={{ fontFamily: "var(--font-kaisei)" }}>{part.text}</span>
               <span className="text-xs text-gray-400 ml-1">({part.mora})</span>

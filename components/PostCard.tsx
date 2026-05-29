@@ -29,7 +29,8 @@ export default function PostCard({
   currentDisplayName: string;
 }) {
   const router = useRouter();
-  const lines = post.haiku.split("／") as [string, string, string];
+  const lines = post.haiku.split("／");
+  const isTanka = post.mode === "tanka";
   const isOwnPost = post.uid === currentUid;
 
   return (
@@ -58,11 +59,27 @@ export default function PostCard({
         </p>
       </div>
 
-      {/* Senryu - vertical writing */}
+      {/* Badges */}
+      {(isTanka || post.jiari) && (
+        <div className="flex gap-1.5 mb-2">
+          {isTanka && (
+            <span className="text-xs bg-[#8B6914]/10 border border-[#8B6914]/30 text-[#8B6914] rounded px-1.5 py-0.5">
+              短歌
+            </span>
+          )}
+          {post.jiari && (
+            <span className="text-xs bg-amber-50 border border-amber-300 text-amber-700 rounded px-1.5 py-0.5">
+              字余り
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Senryu / Tanka - vertical writing */}
       <div
         className="flex flex-row-reverse justify-center gap-6 mb-4 px-4 pt-5 rounded-xl overflow-hidden"
         style={{
-          height: "180px",
+          height: isTanka ? "240px" : "180px",
           backgroundImage: "url('/background_wasi.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",

@@ -24,11 +24,9 @@ export default function HomePage() {
   const { user, loading, signInWithGoogle } = useAuth();
 
   const [isValid, setIsValid] = useState(false);
-  const [pendingLines, setPendingLines] = useState<[string, string, string]>([
-    "",
-    "",
-    "",
-  ]);
+  const [pendingLines, setPendingLines] = useState<string[]>(["", "", ""]);
+  const [poemMode, setPoemMode] = useState<"senryu" | "tanka">("senryu");
+  const [jiari, setJiari] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [location, setLocation] = useState<string | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -73,9 +71,11 @@ export default function HomePage() {
   };
 
   const handleValidChange = useCallback(
-    (valid: boolean, lines: [string, string, string]) => {
+    (valid: boolean, lines: string[], mode: "senryu" | "tanka", newJiari: boolean) => {
       setIsValid(valid);
       setPendingLines(lines);
+      setPoemMode(mode);
+      setJiari(newJiari);
     },
     []
   );
@@ -89,6 +89,8 @@ export default function HomePage() {
         user.displayName ?? "名無し",
         user.photoURL ?? "",
         pendingLines,
+        poemMode,
+        jiari,
         location
       );
       setPosted();
@@ -207,7 +209,10 @@ export default function HomePage() {
       {isValid && (
         <div className="my-4 p-4 bg-white/70 rounded-2xl border border-[#D4C9B8] ink-appear">
           <p className="text-xs text-gray-400 mb-3 text-center">プレビュー</p>
-          <div className="flex flex-row-reverse justify-center gap-6" style={{ height: "110px" }}>
+          <div
+            className="flex flex-row-reverse justify-center gap-6"
+            style={{ height: poemMode === "tanka" ? "160px" : "110px" }}
+          >
             {pendingLines.map((line, i) => (
               <div
                 key={i}

@@ -168,6 +168,32 @@ export const allParts: Part[] = [
   { id: "p405", text: "コケて笑えた", reading: "こけてわらえた", mora: 7 },
   { id: "p406", text: "推しが尊い", reading: "おしがとうとい", mora: 7 },
   { id: "p407", text: "ガチで泣いてた", reading: "がちでないてた", mora: 7 },
+
+  // ── 短歌向け7mora（第四句・結句用）────────────────
+  { id: "t001", text: "君のことだけ", reading: "きみのことだけ", mora: 7 },
+  { id: "t002", text: "忘れられない", reading: "わすれられない", mora: 7 },
+  { id: "t003", text: "夢の中でも", reading: "ゆめのなかでも", mora: 7 },
+  { id: "t004", text: "消えていくのに", reading: "きえていくのに", mora: 7 },
+  { id: "t005", text: "春が来るたび", reading: "はるがくるたび", mora: 7 },
+  { id: "t006", text: "どこにいるのか", reading: "どこにいるのか", mora: 7 },
+  { id: "t007", text: "声が聞こえる", reading: "こえがきこえる", mora: 7 },
+  { id: "t008", text: "また明日もね", reading: "またあしたもね", mora: 7 },
+  { id: "t009", text: "思い出すたび", reading: "おもいだすたび", mora: 7 },
+  { id: "t010", text: "涙があふれ", reading: "なみだがあふれ", mora: 7 },
+  { id: "t011", text: "心が痛い", reading: "こころがいたい", mora: 7 },
+  { id: "t012", text: "手が届かない", reading: "てがとどかない", mora: 7 },
+  { id: "t013", text: "風に消えそう", reading: "かぜにきえそう", mora: 7 },
+  { id: "t014", text: "空が青くて", reading: "そらがあおくて", mora: 7 },
+  { id: "t015", text: "また会いたくて", reading: "またあいたくて", mora: 7 },
+  { id: "t016", text: "月が綺麗だ", reading: "つきがきれいだ", mora: 7 },
+  { id: "t017", text: "何も言えずに", reading: "なにもいえずに", mora: 7 },
+  { id: "t018", text: "時が流れる", reading: "ときがながれる", mora: 7 },
+  { id: "t019", text: "今も好きだよ", reading: "いまもすきだよ", mora: 7 },
+  { id: "t020", text: "離れていても", reading: "はなれていても", mora: 7 },
+  { id: "t021", text: "笑顔が浮かぶ", reading: "えがおがうかぶ", mora: 7 },
+  { id: "t022", text: "名前を呼んで", reading: "なまえをよんで", mora: 7 },
+  { id: "t023", text: "夜更けに想う", reading: "よふけにおもう", mora: 7 },
+  { id: "t024", text: "星が瞬く", reading: "ほしがまたたく", mora: 7 },
 ];
 
 export function getRandomParts(count: number, exclude: string[] = [], maxMora?: number): Part[] {

@@ -119,6 +119,8 @@ export default function PinnedPostCard({
   postCount: number;
 }) {
   const lines = post.haiku.split("／");
+  const isTanka = post.mode === "tanka";
+  const cardHeight = isTanka ? "210px" : "150px";
   const status = getStatus(postCount);
   const frame = FRAME[status];
 
@@ -148,7 +150,7 @@ export default function PinnedPostCard({
             <div
               className="flex flex-row-reverse justify-center gap-5 pt-4 px-4"
               style={{
-                height: "150px",
+                height: cardHeight,
                 backgroundImage: "url('/background_wasi.png')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
@@ -173,7 +175,7 @@ export default function PinnedPostCard({
           <div
             className="flex flex-row-reverse justify-center gap-5 pt-4 px-4 rounded-xl overflow-hidden"
             style={{
-              height: "150px",
+              height: cardHeight,
               backgroundImage: "url('/background_wasi.png')",
               backgroundSize: "cover",
               backgroundPosition: "center",

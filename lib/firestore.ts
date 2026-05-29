@@ -21,6 +21,8 @@ export interface FirestorePost {
   displayName: string;
   photoURL: string;
   haiku: string;
+  mode?: "senryu" | "tanka";
+  jiari?: boolean;
   createdAt: Timestamp | null;
   date: string;
   location?: string | null;
@@ -57,7 +59,9 @@ export function createPost(
   uid: string,
   displayName: string,
   photoURL: string,
-  lines: [string, string, string],
+  lines: string[],
+  mode: "senryu" | "tanka" = "senryu",
+  jiari: boolean = false,
   location?: string | null
 ) {
   return addDoc(collection(db, "posts"), {
@@ -65,6 +69,8 @@ export function createPost(
     displayName,
     photoURL,
     haiku: lines.join("／"),
+    mode,
+    jiari,
     createdAt: serverTimestamp(),
     date: todayString(),
     location: location ?? null,
